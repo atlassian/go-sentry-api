@@ -34,7 +34,7 @@ func TestOrganizationsList(t *testing.T) {
 	}
 }
 
-func TestOrganizationCreate(t *testing.T) {
+func TestOrganizationCreateUpdateDelete(t *testing.T) {
 	authtoken := os.Getenv("SENTRY_AUTH_TOKEN")
 
 	client := NewClient(authtoken, nil, nil)
@@ -45,5 +45,15 @@ func TestOrganizationCreate(t *testing.T) {
 
 	if org.Name != "Test Org via Go Client" {
 		t.Error("New org is not the right slug: %v", org)
+	}
+
+	org.Name = "New Updated Name"
+
+	if err := client.UpdateOrganization(org); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := client.DeleteOrganization(org); err != nil {
+		t.Fatal(err)
 	}
 }
