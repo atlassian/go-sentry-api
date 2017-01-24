@@ -82,5 +82,8 @@ func (c *Client) CreateOrganization(orgname string) (Organization, error) {
 }
 
 func (c *Client) DeleteOrganization(org Organization) error {
+	if err := c.do("DELETE", OrgEndpointName+*org.Slug, nil, nil); err != nil {
+		return err
+	}
 	return nil
 }

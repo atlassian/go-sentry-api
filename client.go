@@ -100,8 +100,10 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 		apierror.StatusCode = response.StatusCode
 		return error(apierror)
 	} else {
-		if err := json.Unmarshal(body, &out); err != nil {
-			return err
+		if out != nil {
+			if err := json.Unmarshal(body, &out); err != nil {
+				return err
+			}
 		}
 	}
 
