@@ -53,6 +53,10 @@ func TestOrganizationCreateUpdateDelete(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if org.Name != "New Updated Name" {
+		t.Error("Org didnt have new name after update")
+	}
+
 	if err := client.DeleteOrganization(org); err != nil {
 		t.Fatal(err)
 	}
