@@ -8,7 +8,7 @@ func TestOrganization(t *testing.T) {
 	org, err := client.CreateOrganization("Test Org via Go Client")
 	if err != nil {
 		if err.(SentryApiError).StatusCode == 429 {
-			t.Skip("Cant create organization skipping")
+			t.Skip("Cant create organization skipping tests suite")
 		} else {
 			t.Fatal(err)
 		}
