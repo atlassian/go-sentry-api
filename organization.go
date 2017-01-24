@@ -6,8 +6,13 @@ import (
 )
 
 const (
-	OrgEndpointName = "organizations"
+	OrgEndpointName           = "organizations"
+	StatReceived    StatQuery = "received"
+	StatRejected    StatQuery = "rejected"
+	StatBlacklisted StatQuery = "blacklisted"
 )
+
+type StatQuery string
 
 type Quota struct {
 	ProjectLimit int `json:"projectLimit"`
@@ -51,6 +56,35 @@ type Organization struct {
 	Id                   *string    `json:"id,omitempty"`
 	IsEarlyAdopter       *bool      `json:"isEarlyAdopter,omitempty"`
 	Features             *[]string  `json:"features,omitempty"`
+}
+
+type OrgStatRequest struct {
+	Stat       StatQuery `json:stat`
+	Since      time.Time `json:since`
+	Until      time.Time `json:until`
+	Resolution string    `json:resolution,omitempty`
+}
+
+type OrganizationStat [2]float64
+
+func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, until time.Time, resolution *string) ([]OrganizationStat, error) {
+	var orgstats []OrganizationStat
+	optionalResolution := ""
+	if resolution != nil {
+		optionalResolution = *resolution
+	}
+	orgstatrequest := &OrgStatRequest{
+		Stat:       stat,
+		Since:      since,
+		Until:      until,
+		Resolution: optionalResolution,
+	}
+
+	if err := c.do("GET", fmt.Sprintf("%s/%s/stats/", OrgEndpointName, org.Slug), &orgstats, orgstatrequest); err != nil {
+		return orgstats, err
+	}
+
+	return orgstats, nil
 }
 
 func (c *Client) GetOrganization(orgslug string) (Organization, error) {

@@ -64,7 +64,7 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 
 	log.Printf("Sending %s request to endpoint %s%s", method, c.Endpoint, endpoint)
 
-	if method != "GET" && in != nil {
+	if in != nil {
 		bytedata, err := json.Marshal(in)
 		if err != nil {
 			return err
