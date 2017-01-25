@@ -8,46 +8,27 @@ import (
 )
 
 const (
-	OrgEndpointName           = "organizations"
-	StatReceived    StatQuery = "received"
-	StatRejected    StatQuery = "rejected"
+
+	// OrgEndpointName is set to roganizations
+	OrgEndpointName = "organizations"
+	// StatReceived is set to received for sending to /stats/ endpoints
+	StatReceived StatQuery = "received"
+	// StatRejected is set to rejected for sending to /stats/ endpoints
+	StatRejected StatQuery = "rejected"
+	// StatBlacklisted is set to blacklisted for sending to /stats/ endpoints
 	StatBlacklisted StatQuery = "blacklisted"
 )
 
+// StatQuery is semple type for sending to /stats/ endpoints
 type StatQuery string
 
+// Quota is your quote for a project limit and max rate
 type Quota struct {
 	ProjectLimit int `json:"projectLimit"`
 	MaxRate      int `json:"maxRate"`
 }
 
-type Project struct {
-	Status             string     `json:"status"`
-	Slug               string     `json:"slug"`
-	DefaultEnvironment *string    `json:"defaultEnvironment"`
-	Color              string     `json:"color"`
-	IsPublic           bool       `json:"isPublic"`
-	DateCreated        time.Time  `json:"dateCreated"`
-	CallSign           string     `json:"callSign"`
-	FirstEvent         *time.Time `json:"firstEvent"`
-	IsBookmarked       bool       `json:"isBookmarked"`
-	CallSignReviewed   bool       `json:"callSignReviewed"`
-	Id                 string     `json:"id"`
-	Name               string     `json:"name"`
-	Platforms          *[]string  `json:"platforms"`
-}
-
-type Team struct {
-	Slug        string    `json:"slug"`
-	Name        string    `json:"name"`
-	HasAccess   bool      `json:"hasAccess"`
-	IsPending   bool      `json:"isPending"`
-	DateCreated time.Time `json:"dateCreated"`
-	IsMember    bool      `json:"isMember"`
-	Id          string    `json:"id"`
-	Projects    []Project `json:"projects,omitempty"`
-}
-
+// Organization is your sentry organization.
 type Organization struct {
 	PendingAccessRequest *int       `json:"pendingAccessRequests,omitempty"`
 	Slug                 *string    `json:"slug,omitempty"`
@@ -55,19 +36,19 @@ type Organization struct {
 	Quota                *Quota     `json:"quota,omitempty"`
 	DateCreated          *time.Time `json:"dateCreated,omitempty"`
 	Teams                *[]Team    `json:"teams,omitempty"`
-	Id                   *string    `json:"id,omitempty"`
+	ID                   *string    `json:"id,omitempty"`
 	IsEarlyAdopter       *bool      `json:"isEarlyAdopter,omitempty"`
 	Features             *[]string  `json:"features,omitempty"`
 }
 
-type OrgStatRequest struct {
+type orgStatRequest struct {
 	Stat       StatQuery `json:"stat"`
 	Since      int64     `json:"since"`
 	Until      int64     `json:"until"`
 	Resolution string    `json:"resolution,omitempty"`
 }
 
-func (o *OrgStatRequest) ToQueryString() string {
+func (o *orgStatRequest) ToQueryString() string {
 	query := url.Values{}
 	query.Add("stat", string(o.Stat))
 	query.Add("since", strconv.FormatInt(o.Since, 10))
@@ -75,8 +56,10 @@ func (o *OrgStatRequest) ToQueryString() string {
 	return query.Encode()
 }
 
+// OrganizationStat is used for tetting a time in seconds and the metric in a float
 type OrganizationStat [2]float64
 
+// GetOrganizationStats fetches stats from the org. Needs a Organization, a StatQuery, a timestamp in seconds since epoch and a optional resolution
 func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, until int64, resolution *string) ([]OrganizationStat, error) {
 	var orgstats []OrganizationStat
 
@@ -84,58 +67,48 @@ func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, u
 	if resolution != nil {
 		optionalResolution = *resolution
 	}
-	orgstatrequest := &OrgStatRequest{
+	orgstatrequest := &orgStatRequest{
 		Stat:       stat,
 		Since:      since,
 		Until:      until,
 		Resolution: optionalResolution,
 	}
 
-	if err := c.do("GET", fmt.Sprintf("%s/%s/stats", OrgEndpointName, *org.Slug), &orgstats, orgstatrequest); err != nil {
-		return orgstats, err
-	}
-
-	return orgstats, nil
+	err := c.do("GET", fmt.Sprintf("%s/%s/stats", OrgEndpointName, *org.Slug), &orgstats, orgstatrequest)
+	return orgstats, err
 }
 
+// GetOrganization takes a org slug and returns back the org
 func (c *Client) GetOrganization(orgslug string) (Organization, error) {
 	var org Organization
 
-	if err := c.do("GET", fmt.Sprintf("%s/%s", OrgEndpointName, orgslug), &org, nil); err != nil {
-		return org, err
-	}
-	return org, nil
+	err := c.do("GET", fmt.Sprintf("%s/%s", OrgEndpointName, orgslug), &org, nil)
+	return org, err
 }
 
+// GetOrganizations will return back every organization in the sentry instance
 func (c *Client) GetOrganizations() ([]Organization, error) {
 	orgs := make([]Organization, 0)
-	if err := c.do("GET", OrgEndpointName, &orgs, nil); err != nil {
-		return orgs, err
-	}
-	return orgs, nil
+	err := c.do("GET", OrgEndpointName, &orgs, nil)
+	return orgs, err
 }
 
+// CreateOrganization creates a organization with a name
 func (c *Client) CreateOrganization(orgname string) (Organization, error) {
 	var org Organization
 	orgreq := &Organization{
 		Name: orgname,
 	}
-	if err := c.do("POST", OrgEndpointName, &org, orgreq); err != nil {
-		return org, err
-	}
-	return org, nil
+	err := c.do("POST", OrgEndpointName, &org, orgreq)
+	return org, err
 }
 
+// UpdateOrganization takes a organization and updates it on the server side
 func (c *Client) UpdateOrganization(org Organization) error {
-	if err := c.do("PUT", fmt.Sprintf("%s/%s", OrgEndpointName, *org.Slug), &org, &org); err != nil {
-		return err
-	}
-	return nil
+	return c.do("PUT", fmt.Sprintf("%s/%s", OrgEndpointName, *org.Slug), &org, &org)
 }
 
+// DeleteOrganization will delete the Org. There is not way to revert this if you do.
 func (c *Client) DeleteOrganization(org Organization) error {
-	if err := c.do("DELETE", fmt.Sprintf("%s/%s", OrgEndpointName, *org.Slug), nil, nil); err != nil {
-		return err
-	}
-	return nil
+	return c.do("DELETE", fmt.Sprintf("%s/%s", OrgEndpointName, *org.Slug), nil, nil)
 }

@@ -8,23 +8,23 @@ import (
 func TestOrganization(t *testing.T) {
 	org, err := client.CreateOrganization("Test Org via Go Client")
 	if err != nil {
-		if err.(SentryApiError).StatusCode == 429 {
+		if err.(APIError).StatusCode == 429 {
 			t.Skip("Cant create organization due to rate limiting skipping tests suite")
 		} else {
 			t.Fatal(err)
 		}
 	}
 	t.Run("Organization Get", func(t *testing.T) {
-		org, err := client.GetOrganization(*org.Slug)
+		testorg, err := client.GetOrganization(*org.Slug)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if org.Name != "Test Org via Go Client" {
+		if testorg.Name != "Test Org via Go Client" {
 			t.Error("Name is not atlassian")
 		}
 		t.Run("Organization Update", func(t *testing.T) {
 			if org.Name != "Test Org via Go Client" {
-				t.Error("New org is not the right slug: %v", org)
+				t.Error("New org is not the right slug")
 			}
 
 			org.Name = "New Updated Name"

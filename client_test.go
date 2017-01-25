@@ -13,6 +13,6 @@ func TestClientBadEndpoint(t *testing.T) {
 	badendpoint := ""
 	_, berr := NewClient(authtoken, &badendpoint, nil)
 	if berr == nil {
-		t.Error("Should have gotten a error for a empty endpoint")
+		t.Error("Should have gotten an error for an empty endpoint")
 	}
 }

@@ -4,12 +4,14 @@ import (
 	"fmt"
 )
 
-type SentryApiError struct {
-	Detail     string `json:detail`
-	StatusCode int    `json:-`
+// APIError is used when the api returns back a non 200 response
+type APIError struct {
+	Detail     string `json:"detail"`
+	StatusCode int    `json:"-"`
 }
 
-func (s SentryApiError) Error() string {
+// Error is the interface needed to transfor to a error type
+func (s APIError) Error() string {
 	if s.StatusCode == 404 {
 		return "404: Endpoint/Resource not found"
 	}

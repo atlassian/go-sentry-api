@@ -1,5 +1,6 @@
 package sentry
 
-type SentryQueryReq interface {
+// QueryReq is a simple internal interface
+type QueryReq interface {
 	ToQueryString() string
 }
