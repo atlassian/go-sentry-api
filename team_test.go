@@ -35,6 +35,24 @@ func TestTeamResource(t *testing.T) {
 		}
 	})
 
+	t.Run("Get all projects for this team", func(t *testing.T) {
+
+		newproject, err := client.CreateProject(org, team, "Example project for sentry", nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		projects, err := client.GetTeamProjects(org, team)
+		if err != nil {
+			t.Error(err)
+		}
+
+		first := projects[0]
+		if first.Name != newproject.Name {
+			t.Error("First project in list not project created")
+		}
+
+	})
+
 	if err := client.DeleteTeam(org, team); err != nil {
 		t.Fatal(err)
 	}

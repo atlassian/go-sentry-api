@@ -34,3 +34,10 @@ func (c *Client) CreateTeam(o Organization, name string, slug *string) (Team, er
 func (c *Client) DeleteTeam(o Organization, t Team) error {
 	return c.do(http.MethodDelete, fmt.Sprintf("teams/%s/%s", *o.Slug, *t.Slug), nil, nil)
 }
+
+// GetTeamProjects fetchs all projects for a Team
+func (c *Client) GetTeamProjects(o Organization, t Team) ([]Project, error) {
+	projects := make([]Project, 0)
+	err := c.do("GET", fmt.Sprintf("teams/%s/%s/projects", *o.Slug, *t.Slug), &projects, nil)
+	return projects, err
+}
