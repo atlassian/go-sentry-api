@@ -2,19 +2,19 @@ package sentry
 
 import (
 	"testing"
+	"time"
 )
 
 func TestOrganization(t *testing.T) {
 	org, err := client.CreateOrganization("Test Org via Go Client")
 	if err != nil {
 		if err.(SentryApiError).StatusCode == 429 {
-			t.Skip("Cant create organization skipping tests suite")
+			t.Skip("Cant create organization due to rate limiting skipping tests suite")
 		} else {
 			t.Fatal(err)
 		}
 	}
 	t.Run("Organization Get", func(t *testing.T) {
-		t.Parallel()
 		org, err := client.GetOrganization(*org.Slug)
 		if err != nil {
 			t.Fatal(err)
@@ -39,7 +39,6 @@ func TestOrganization(t *testing.T) {
 		})
 	})
 	t.Run("Fetch organizations", func(t *testing.T) {
-		t.Parallel()
 		orgs, err := client.GetOrganizations()
 		if err != nil {
 			t.Fatal(err)
@@ -51,4 +50,20 @@ func TestOrganization(t *testing.T) {
 	if err := client.DeleteOrganization(org); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestOrganizationStat(t *testing.T) {
+	now := time.Now().Unix()
+	hourlater := time.Duration(1) * time.Hour
+	later := now - int64(hourlater.Seconds())
+
+	org, err := client.GetOrganization("sentry")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = client.GetOrganizationStats(org, StatReceived, later, now, nil)
+	if err != nil {
+		t.Error(err)
+	}
+
 }

@@ -2,6 +2,8 @@ package sentry
 
 import (
 	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -59,16 +61,25 @@ type Organization struct {
 }
 
 type OrgStatRequest struct {
-	Stat       StatQuery `json:stat`
-	Since      time.Time `json:since`
-	Until      time.Time `json:until`
-	Resolution string    `json:resolution,omitempty`
+	Stat       StatQuery `json:"stat"`
+	Since      int64     `json:"since"`
+	Until      int64     `json:"until"`
+	Resolution string    `json:"resolution,omitempty"`
+}
+
+func (o *OrgStatRequest) ToQueryString() string {
+	query := url.Values{}
+	query.Add("stat", string(o.Stat))
+	query.Add("since", strconv.FormatInt(o.Since, 10))
+	query.Add("until", strconv.FormatInt(o.Until, 10))
+	return query.Encode()
 }
 
 type OrganizationStat [2]float64
 
-func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, until time.Time, resolution *string) ([]OrganizationStat, error) {
+func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, until int64, resolution *string) ([]OrganizationStat, error) {
 	var orgstats []OrganizationStat
+
 	optionalResolution := ""
 	if resolution != nil {
 		optionalResolution = *resolution
@@ -80,7 +91,7 @@ func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, u
 		Resolution: optionalResolution,
 	}
 
-	if err := c.do("GET", fmt.Sprintf("%s/%s/stats/", OrgEndpointName, org.Slug), &orgstats, orgstatrequest); err != nil {
+	if err := c.do("GET", fmt.Sprintf("%s/%s/stats", OrgEndpointName, *org.Slug), &orgstats, orgstatrequest); err != nil {
 		return orgstats, err
 	}
 

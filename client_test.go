@@ -2,7 +2,17 @@ package sentry
 
 import (
 	"os"
+	"testing"
 )
 
 var authtoken = os.Getenv("SENTRY_AUTH_TOKEN")
-var client = NewClient(authtoken, nil, nil)
+var endpoint = os.Getenv("SENTRY_ENDPOINT")
+var client, clienterr = NewClient(authtoken, &endpoint, nil)
+
+func TestClientBadEndpoint(t *testing.T) {
+	badendpoint := ""
+	_, berr := NewClient(authtoken, &badendpoint, nil)
+	if berr == nil {
+		t.Error("Should have gotten a error for a empty endpoint")
+	}
+}

@@ -22,7 +22,7 @@ type Client struct {
 	HttpClient *http.Client
 }
 
-func NewClient(authtoken string, endpoint *string, timeout *int) *Client {
+func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error) {
 	var (
 		clientEndpoint string
 		clientTimeout  time.Duration
@@ -31,6 +31,9 @@ func NewClient(authtoken string, endpoint *string, timeout *int) *Client {
 	if endpoint == nil {
 		clientEndpoint = DefaultEndpoint
 	} else {
+		if *endpoint == "" {
+			return nil, fmt.Errorf("Endpoint can not be a empty string")
+		}
 		clientEndpoint = *endpoint
 	}
 
@@ -46,7 +49,7 @@ func NewClient(authtoken string, endpoint *string, timeout *int) *Client {
 		HttpClient: &http.Client{
 			Timeout: clientTimeout,
 		},
-	}
+	}, nil
 }
 
 func CreateURI(resource string) string {
@@ -64,12 +67,13 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 
 	log.Printf("Sending %s request to endpoint %s%s", method, c.Endpoint, endpoint)
 
-	if in != nil {
+	if in != nil && method != "GET" {
 		bytedata, err := json.Marshal(in)
 		if err != nil {
 			return err
 		}
 		bodyreader = bytes.NewReader(bytedata)
+		log.Printf("Sending data: %s", bytedata)
 	}
 
 	request, err = http.NewRequest(method, c.Endpoint+endpoint+"/", bodyreader)
@@ -79,7 +83,14 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 	request.Header.Add("Content-Type", "application/json")
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
 
+	if in != nil && method == "GET" {
+		request.URL.RawQuery = in.(SentryQueryReq).ToQueryString()
+		log.Printf("Added query params url is now %s", request.URL)
+	}
+
 	response, err = c.HttpClient.Do(request)
+
+	defer response.Body.Close()
 
 	if err != nil {
 		return err
@@ -90,21 +101,22 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 		return err
 	}
 
+	defer response.Body.Close()
+
 	if response.StatusCode > 299 || response.StatusCode < 200 {
-		apierror := SentryApiError{}
+		apierror := SentryApiError{
+			StatusCode: response.StatusCode,
+		}
 
 		if err := json.Unmarshal(body, &apierror); err != nil {
 			return err
 		}
 
-		apierror.StatusCode = response.StatusCode
 		return error(apierror)
-	} else {
-		if out != nil {
-			if err := json.Unmarshal(body, &out); err != nil {
-				return err
-			}
-		}
+	}
+
+	if err := json.Unmarshal(body, &out); err != nil {
+		return err
 	}
 
 	return nil
