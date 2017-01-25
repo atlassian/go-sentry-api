@@ -26,6 +26,12 @@ func TestTeamResource(t *testing.T) {
 			if proj.Name != "Python test project" {
 				t.Error("Project name does not match")
 			}
+			t.Run("Delete project for org", func(t *testing.T) {
+				err := client.DeleteProject(org, proj)
+				if err != nil {
+					t.Error(err)
+				}
+			})
 		}
 	})
 

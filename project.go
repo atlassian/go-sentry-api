@@ -33,3 +33,8 @@ func (c *Client) CreateProject(o Organization, t Team, name string, slug *string
 	err := c.do("POST", fmt.Sprintf("teams/%s/%s/projects", *o.Slug, *t.Slug), &proj, projreq)
 	return proj, err
 }
+
+// DeleteProject will take your org, team, and proj and delete it from sentry.
+func (c *Client) DeleteProject(o Organization, p Project) error {
+	return c.do("DELETE", fmt.Sprintf("projects/%s/%s", *o.Slug, *p.Slug), nil, nil)
+}
