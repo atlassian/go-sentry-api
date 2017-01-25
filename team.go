@@ -30,6 +30,11 @@ func (c *Client) CreateTeam(o Organization, name string, slug *string) (Team, er
 	return team, err
 }
 
+// UpdateTeam will update a team on the server side
+func (c *Client) UpdateTeam(o Organization, t Team) error {
+	return c.do("PUT", fmt.Sprintf("teams/%s/%s", *o.Slug, *t.Slug), &t, &t)
+}
+
 // DeleteTeam deletes a team from a organization
 func (c *Client) DeleteTeam(o Organization, t Team) error {
 	return c.do(http.MethodDelete, fmt.Sprintf("teams/%s/%s", *o.Slug, *t.Slug), nil, nil)

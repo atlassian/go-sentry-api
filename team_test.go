@@ -19,6 +19,17 @@ func TestTeamResource(t *testing.T) {
 		}
 	})
 
+	t.Run("Update the team name", func(t *testing.T) {
+		team.Name = "Updated team name for testing"
+		err := client.UpdateTeam(org, team)
+		if err != nil {
+			t.Error(err)
+		}
+		if team.Name != "Updated team name for testing" {
+			t.Error("Failed to update team on server side")
+		}
+	})
+
 	t.Run("Create new project for team", func(t *testing.T) {
 		if proj, err := client.CreateProject(org, team, "Python test project", nil); err != nil {
 			t.Error(err)
