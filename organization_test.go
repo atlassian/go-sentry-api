@@ -2,7 +2,6 @@ package sentry
 
 import (
 	"testing"
-	"time"
 )
 
 func TestOrganization(t *testing.T) {
@@ -50,24 +49,4 @@ func TestOrganization(t *testing.T) {
 	if err := client.DeleteOrganization(org); err != nil {
 		t.Fatal(err)
 	}
-}
-
-func TestOrganizationStat(t *testing.T) {
-	now := time.Now().Unix()
-	hourlater := time.Duration(1) * time.Hour
-	later := now - int64(hourlater.Seconds())
-
-	org, err := client.GetOrganization("sentry")
-	if err != nil {
-		t.Fatal(err)
-	}
-	stats, err := client.GetOrganizationStats(org, StatReceived, later, now, nil)
-	if err != nil {
-		t.Error(err)
-	}
-
-	if len(stats) <= 0 {
-		t.Error("No stats were returned")
-	}
-
 }

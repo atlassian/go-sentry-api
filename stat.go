@@ -19,7 +19,7 @@ type statRequest struct {
 	Stat       StatQuery `json:"stat"`
 	Since      int64     `json:"since"`
 	Until      int64     `json:"until"`
-	Resolution string    `json:"resolution,omitempty"`
+	Resolution *string   `json:"resolution,omitempty"`
 }
 
 func (o *statRequest) ToQueryString() string {
@@ -40,15 +40,11 @@ type StatQuery string
 func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, until int64, resolution *string) ([]Stat, error) {
 	var orgstats []Stat
 
-	optionalResolution := ""
-	if resolution != nil {
-		optionalResolution = *resolution
-	}
 	orgstatrequest := &statRequest{
 		Stat:       stat,
 		Since:      since,
 		Until:      until,
-		Resolution: optionalResolution,
+		Resolution: resolution,
 	}
 
 	err := c.do("GET", fmt.Sprintf("%s/%s/stats", OrgEndpointName, *org.Slug), &orgstats, orgstatrequest)
@@ -57,6 +53,14 @@ func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, u
 
 // GetTeamStats will fetch all stats for a specific team. Similar to GetOrganizationStats
 func (c *Client) GetTeamStats(o Organization, t Team, stat StatQuery, since, until int64, resolution *string) ([]Stat, error) {
-	teamstats := make([]Stat, 0)
-	return teamstats, nil
+	var teamstats []Stat
+	teamstatrequest := &statRequest{
+		Stat:       stat,
+		Since:      since,
+		Until:      until,
+		Resolution: resolution,
+	}
+
+	err := c.do("GET", fmt.Sprintf("teams/%s/%s/stats", *o.Slug, *t.Slug), &teamstats, teamstatrequest)
+	return teamstats, err
 }
