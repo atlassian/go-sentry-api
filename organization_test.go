@@ -61,9 +61,13 @@ func TestOrganizationStat(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = client.GetOrganizationStats(org, StatReceived, later, now, nil)
+	stats, err := client.GetOrganizationStats(org, StatReceived, later, now, nil)
 	if err != nil {
 		t.Error(err)
+	}
+
+	if len(stats) <= 0 {
+		t.Error("No stats were returned")
 	}
 
 }
