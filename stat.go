@@ -64,3 +64,17 @@ func (c *Client) GetTeamStats(o Organization, t Team, stat StatQuery, since, unt
 	err := c.do("GET", fmt.Sprintf("teams/%s/%s/stats", *o.Slug, *t.Slug), &teamstats, teamstatrequest)
 	return teamstats, err
 }
+
+// GetProjectStats will fetch all stats for a specific project. Similar to GetOrganizationStats
+func (c *Client) GetProjectStats(o Organization, p Project, stat StatQuery, since, until int64, resolution *string) ([]Stat, error) {
+	var stats []Stat
+	statrequest := &statRequest{
+		Stat:       stat,
+		Since:      since,
+		Until:      until,
+		Resolution: resolution,
+	}
+
+	err := c.do("GET", fmt.Sprintf("projects/%s/%s/stats", *o.Slug, *p.Slug), &stats, statrequest)
+	return stats, err
+}
