@@ -31,4 +31,18 @@ func TestProjectResource(t *testing.T) {
 		}
 	})
 
+	t.Run("Fetch all projects", func(t *testing.T) {
+		projects, err := client.GetProjects()
+		if err != nil {
+			t.Error(err)
+		}
+		if len(projects) <= 0 {
+			t.Error("Should have at least on project but got 0")
+		}
+	})
+
+	if err := client.DeleteTeam(org, team); err != nil {
+		t.Error(err)
+	}
+
 }

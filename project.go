@@ -70,6 +70,13 @@ func (c *Client) UpdateProject(o Organization, p Project) error {
 	return c.do("PUT", fmt.Sprintf("projects/%s/%s", *o.Slug, *p.Slug), &p, &p)
 }
 
+// GetProjects fetchs all projects in a sentry instance
+func (c *Client) GetProjects() ([]Project, error) {
+	var proj []Project
+	err := c.do("GET", "projects", &proj, nil)
+	return proj, err
+}
+
 // DeleteProject will take your org, team, and proj and delete it from sentry.
 func (c *Client) DeleteProject(o Organization, p Project) error {
 	return c.do("DELETE", fmt.Sprintf("projects/%s/%s", *o.Slug, *p.Slug), nil, nil)
