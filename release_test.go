@@ -49,6 +49,25 @@ func TestReleaseResource(t *testing.T) {
 				}
 			})
 		})
+	})
+	t.Run("Fetch all releases for a project", func(t *testing.T) {
+		newrelease := NewRelease{
+			Version: "abcdefgh123456",
+		}
+
+		_, relerr := client.CreateRelease(org, project, newrelease)
+		if relerr != nil {
+			t.Error(err)
+		}
+
+		releases, relserr := client.GetReleases(org, project)
+		if relserr != nil {
+			t.Error(relserr)
+		}
+
+		if len(releases) == 0 {
+			t.Error("Should be at least one release")
+		}
 
 	})
 	delprojerr := client.DeleteProject(org, project)
