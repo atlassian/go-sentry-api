@@ -94,8 +94,6 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 		return err
 	}
 
-	defer response.Body.Close()
-
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return err
