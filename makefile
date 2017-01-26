@@ -7,7 +7,7 @@ all:
 
 test:
 	go fmt *.go
-	SENTRY_ENDPOINT=http://localhost:8080/api/0/ go test -v -cover
+	SENTRY_ENDPOINT=http://localhost:8080/api/0/ go test -v -coverprofile=coverage.out
 
 devenv:
 	docker run -d --name sentry-redis redis
