@@ -59,30 +59,85 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 	}, nil
 }
 
-func (c *Client) do(method string, endpoint string, out interface{}, in interface{}) error {
+func (c *Client) hasError(response *http.Response) error {
 
-	var (
-		bodyreader io.Reader
-	)
+	if response.StatusCode > 299 || response.StatusCode < 200 {
+		apierror := APIError{
+			StatusCode: response.StatusCode,
+		}
 
-	log.Printf("Sending %s request to endpoint %s%s", method, c.Endpoint, endpoint)
-
-	if in != nil && method != "GET" {
-		bytedata, err := json.Marshal(in)
+		body, err := ioutil.ReadAll(response.Body)
 		if err != nil {
 			return err
 		}
-		bodyreader = bytes.NewReader(bytedata)
-		log.Printf("Sending data: %s", bytedata)
+
+		if err := json.Unmarshal(body, &apierror); err != nil {
+			return err
+		}
+
+		return error(apierror)
+	}
+	return nil
+}
+
+func (c *Client) decodeOrError(response *http.Response, out interface{}) error {
+
+	if err := c.hasError(response); err != nil {
+		return err
 	}
 
-	request, err := http.NewRequest(method, c.Endpoint+endpoint+"/", bodyreader)
+	if out != nil {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return err
+		}
+		if err := json.Unmarshal(body, &out); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c *Client) encodeOrError(in interface{}) (io.Reader, error) {
+	bytedata, err := json.Marshal(in)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes.NewReader(bytedata), nil
+}
+
+func (c *Client) newRequest(method, endpoint string, reader io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(method, c.Endpoint+endpoint+"/", reader)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Close = true
+	return req, nil
+}
+
+func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryReq) error {
+	return nil
+}
+
+func (c *Client) do(method string, endpoint string, out interface{}, in interface{}) error {
+
+	var bodyreader io.Reader
+
+	if in != nil && method != "GET" {
+		newbodyreader, err := c.encodeOrError(&in)
+		if err != nil {
+			return err
+		}
+		bodyreader = newbodyreader
+	}
+
+	request, err := c.newRequest(method, endpoint, bodyreader)
 	if err != nil {
 		return err
 	}
-	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
-	request.Close = true
 
 	if in != nil && method == "GET" {
 		request.URL.RawQuery = in.(QueryReq).ToQueryString()
@@ -93,31 +148,6 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 	if err != nil {
 		return err
 	}
-
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return err
-	}
-
 	defer response.Body.Close()
-
-	if response.StatusCode > 299 || response.StatusCode < 200 {
-		apierror := APIError{
-			StatusCode: response.StatusCode,
-		}
-
-		if err := json.Unmarshal(body, &apierror); err != nil {
-			return err
-		}
-
-		return error(apierror)
-	}
-
-	if out != nil {
-		if err := json.Unmarshal(body, &out); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return c.decodeOrError(response, out)
 }
