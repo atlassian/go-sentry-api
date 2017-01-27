@@ -113,7 +113,7 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 
 	var bodyreader io.Reader
 
-	if in != nil && method != "GET" {
+	if in != nil {
 		newbodyreader, err := c.encodeOrError(&in)
 		if err != nil {
 			return nil, err
