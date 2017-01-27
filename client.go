@@ -86,6 +86,8 @@ func (c *Client) decodeOrError(response *http.Response, out interface{}) error {
 		return err
 	}
 
+	defer response.Body.Close()
+
 	if out != nil {
 		body, err := ioutil.ReadAll(response.Body)
 		if err != nil {
@@ -107,47 +109,56 @@ func (c *Client) encodeOrError(in interface{}) (io.Reader, error) {
 	return bytes.NewReader(bytedata), nil
 }
 
-func (c *Client) newRequest(method, endpoint string, reader io.Reader) (*http.Request, error) {
-	req, err := http.NewRequest(method, c.Endpoint+endpoint+"/", reader)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
-	req.Close = true
-	return req, nil
-}
-
-func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryReq) error {
-	return nil
-}
-
-func (c *Client) do(method string, endpoint string, out interface{}, in interface{}) error {
+func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Request, error) {
 
 	var bodyreader io.Reader
 
 	if in != nil && method != "GET" {
 		newbodyreader, err := c.encodeOrError(&in)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		bodyreader = newbodyreader
 	}
 
-	request, err := c.newRequest(method, endpoint, bodyreader)
+	req, err := http.NewRequest(method, c.Endpoint+endpoint+"/", bodyreader)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Close = true
+
+	return req, nil
+}
+
+func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryReq) error {
+	request, err := c.newRequest(method, endpoint, in)
+	if err != nil {
+		return err
+	}
+	request.URL.RawQuery = query.ToQueryString()
+	return c.send(request, out)
+}
+
+func (c *Client) do(method string, endpoint string, out interface{}, in interface{}) error {
+	request, err := c.newRequest(method, endpoint, in)
 	if err != nil {
 		return err
 	}
 
+	// TODO: Remove this
 	if in != nil && method == "GET" {
 		request.URL.RawQuery = in.(QueryReq).ToQueryString()
 		log.Printf("Added query params url is now %s", request.URL)
 	}
+	return c.send(request, out)
+}
 
-	response, err := c.HTTPClient.Do(request)
+func (c *Client) send(req *http.Request, out interface{}) error {
+	response, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
 	return c.decodeOrError(response, out)
 }
