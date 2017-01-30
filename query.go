@@ -1,6 +1,6 @@
 package sentry
 
-// QueryReq is a simple internal interface
-type QueryReq interface {
+// QueryArgs is a simple internal interface
+type QueryArgs interface {
 	ToQueryString() string
 }
