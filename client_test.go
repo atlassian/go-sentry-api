@@ -10,6 +10,7 @@ var endpoint = os.Getenv("SENTRY_ENDPOINT")
 var client, clienterr = NewClient(authtoken, &endpoint, nil)
 
 func TestClientBadEndpoint(t *testing.T) {
+	t.Parallel()
 	badendpoint := ""
 	_, berr := NewClient(authtoken, &badendpoint, nil)
 	if berr == nil {
