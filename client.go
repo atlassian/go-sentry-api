@@ -11,8 +11,10 @@ import (
 )
 
 const (
-	// DefaultEndpoint is the default endpoint
-	DefaultEndpoint = "https://sentry.io/api/0/"
+	// DefaultHost is the default host that is used
+	DefaultHost = "https://sentry.io/"
+	// DefaultEndpoint is the entry point for the api
+	DefaultEndpoint = "/api/0/"
 	// DefaultTimeout is the default timeout and is set to 60 seconds
 	DefaultTimeout = time.Duration(60) * time.Second
 )
@@ -35,7 +37,7 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 	)
 
 	if endpoint == nil {
-		clientEndpoint = DefaultEndpoint
+		clientEndpoint = fmt.Sprintf("%s/%s", DefaultHost, DefaultEndpoint)
 	} else {
 		if *endpoint == "" {
 			return nil, fmt.Errorf("Endpoint can not be a empty string")
@@ -131,7 +133,7 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 	return req, nil
 }
 
-func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryReq) error {
+func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryArgs) error {
 	request, err := c.newRequest(method, endpoint, in)
 	if err != nil {
 		return err
@@ -146,6 +148,34 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 		return err
 	}
 	return c.send(request, out)
+}
+
+func (c *Client) doWithPagination(method, endpoint string, out, in interface{}) (*Link, error) {
+	request, err := c.newRequest(method, endpoint, in)
+	if err != nil {
+		return nil, err
+	}
+	return c.sendGetLink(request, out)
+}
+
+func (c *Client) fetchLink(r *http.Response) *Link {
+	link := &Link{}
+	if r.Header.Get("Link") != "" {
+		link = NewLink(r.Header.Get("Link"))
+	}
+
+	return link
+}
+
+func (c *Client) sendGetLink(req *http.Request, out interface{}) (*Link, error) {
+	response, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	link := c.fetchLink(response)
+	decodeerr := c.decodeOrError(response, out)
+	return link, decodeerr
 }
 
 func (c *Client) send(req *http.Request, out interface{}) error {
