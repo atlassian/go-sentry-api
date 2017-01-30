@@ -38,10 +38,10 @@ func (c *Client) GetOrganization(orgslug string) (Organization, error) {
 }
 
 // GetOrganizations will return back every organization in the sentry instance
-func (c *Client) GetOrganizations() ([]Organization, error) {
+func (c *Client) GetOrganizations() ([]Organization, *Link, error) {
 	orgs := make([]Organization, 0)
-	err := c.do("GET", OrgEndpointName, &orgs, nil)
-	return orgs, err
+	link, err := c.doWithPagination("GET", OrgEndpointName, &orgs, nil)
+	return orgs, link, err
 }
 
 // CreateOrganization creates a organization with a name
