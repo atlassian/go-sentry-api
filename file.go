@@ -2,11 +2,9 @@ package sentry
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -51,8 +49,6 @@ func (c *Client) UploadReleaseFile(o Organization, p Project, r Release,
 
 	endpoint := fmt.Sprintf("%sprojects/%s/%s/releases/%s/files/", c.Endpoint, *o.Slug, *p.Slug, r.Version)
 
-	log.Printf("Sending POST to %s", endpoint)
-
 	req, err := http.NewRequest("POST", endpoint, body)
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
@@ -63,37 +59,8 @@ func (c *Client) UploadReleaseFile(o Organization, p Project, r Release,
 		return file, err
 	}
 
-	response, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return file, err
-	}
-
-	defer response.Body.Close()
-
-	respbody, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return file, err
-	}
-
-	if response.StatusCode > 299 || response.StatusCode < 200 {
-		apierror := APIError{
-			StatusCode: response.StatusCode,
-		}
-
-		if len(respbody) > 0 {
-			if err := json.Unmarshal(respbody, &apierror); err != nil {
-				return file, err
-			}
-		}
-
-		return file, error(apierror)
-	}
-
-	if err := json.Unmarshal(respbody, &file); err != nil {
-		return file, err
-	}
-
-	return file, nil
+	decoderr := c.send(req, &file)
+	return file, decoderr
 }
 
 // DeleteReleaseFile will remove the file from a sentry release
