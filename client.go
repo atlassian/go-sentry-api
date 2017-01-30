@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
@@ -145,12 +144,6 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 	request, err := c.newRequest(method, endpoint, in)
 	if err != nil {
 		return err
-	}
-
-	// TODO: Remove this
-	if in != nil && method == "GET" {
-		request.URL.RawQuery = in.(QueryReq).ToQueryString()
-		log.Printf("Added query params url is now %s", request.URL)
 	}
 	return c.send(request, out)
 }

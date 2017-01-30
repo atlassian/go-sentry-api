@@ -47,7 +47,7 @@ func (c *Client) GetOrganizationStats(org Organization, stat StatQuery, since, u
 		Resolution: resolution,
 	}
 
-	err := c.do("GET", fmt.Sprintf("%s/%s/stats", OrgEndpointName, *org.Slug), &orgstats, orgstatrequest)
+	err := c.doWithQuery("GET", fmt.Sprintf("%s/%s/stats", OrgEndpointName, *org.Slug), &orgstats, nil, orgstatrequest)
 	return orgstats, err
 }
 
@@ -61,7 +61,7 @@ func (c *Client) GetTeamStats(o Organization, t Team, stat StatQuery, since, unt
 		Resolution: resolution,
 	}
 
-	err := c.do("GET", fmt.Sprintf("teams/%s/%s/stats", *o.Slug, *t.Slug), &teamstats, teamstatrequest)
+	err := c.doWithQuery("GET", fmt.Sprintf("teams/%s/%s/stats", *o.Slug, *t.Slug), &teamstats, nil, teamstatrequest)
 	return teamstats, err
 }
 
@@ -75,6 +75,6 @@ func (c *Client) GetProjectStats(o Organization, p Project, stat StatQuery, sinc
 		Resolution: resolution,
 	}
 
-	err := c.do("GET", fmt.Sprintf("projects/%s/%s/stats", *o.Slug, *p.Slug), &stats, statrequest)
+	err := c.doWithQuery("GET", fmt.Sprintf("projects/%s/%s/stats", *o.Slug, *p.Slug), &stats, nil, statrequest)
 	return stats, err
 }
