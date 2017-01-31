@@ -84,6 +84,6 @@ func (c *Client) GetReleaseFiles(o Organization, p Project, r Release) ([]File, 
 //GetReleaseFile will get the release file
 func (c *Client) GetReleaseFile(o Organization, p Project, r Release, id string) (File, error) {
 	var file File
-	err := c.do("PUT", fmt.Sprintf("projects/%s/%s/releases/%s/files/%s", *o.Slug, *p.Slug, r.Version, id), &file, nil)
+	err := c.do("GET", fmt.Sprintf("projects/%s/%s/releases/%s/files/%s", *o.Slug, *p.Slug, r.Version, id), &file, nil)
 	return file, err
 }
