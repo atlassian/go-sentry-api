@@ -1,0 +1,4 @@
+package: bitbucket.org/atlassian/go-sentry-api
+import: []
+testImport:
+- package: github.com/getsentry/raven-go
