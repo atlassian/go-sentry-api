@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"bitbucket.org/atlassian/go-sentry-api/interfaces"
+	"bitbucket.org/atlassian/go-sentry-api/datatype"
 )
 
 // Tag is used for a event
@@ -28,27 +28,16 @@ type Entry struct {
 }
 
 //GetInterface will convert the entry into a go interface
-func (e *Entry) GetInterface() (interface{}, error) {
+func (e *Entry) GetInterface() (string, interface{}, error) {
 	var destination interface{}
-	switch e.Type {
-	case "message":
-		destination = new(interfaces.Message)
-	case "stacktrace":
-		destination = new(interfaces.Stacktrace)
-	case "exception":
-		destination = new(interfaces.Exception)
-	case "request":
-		destination = new(interfaces.Request)
-	case "template":
-		destination = new(interfaces.Template)
-	case "user":
-		destination = new(interfaces.User)
-	case "query":
-		destination = new(interfaces.Query)
+
+	name, inter := datatype.GetMapping(e.Type)
+	if inter != nil {
+		destination = inter
 	}
 
-	err := json.Unmarshal(e.Data, destination)
-	return destination, err
+	err := json.Unmarshal(e.Data, &destination)
+	return name, destination, err
 }
 
 // Event is the event that was created on the app and sentry reported on

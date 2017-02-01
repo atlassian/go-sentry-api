@@ -1,4 +1,4 @@
-package interfaces
+package datatype
 
 //Message implements the sentry interface that a message is in a event request
 type Message struct {

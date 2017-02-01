@@ -1,4 +1,4 @@
-package interfaces
+package datatype
 
 //User implements the sentry interface for a authenticated user
 type User struct {

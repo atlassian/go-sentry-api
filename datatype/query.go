@@ -1,4 +1,4 @@
-package interfaces
+package datatype
 
 //Query implements the sentry interface for a query
 type Query struct {
