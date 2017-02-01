@@ -6,6 +6,8 @@ import (
 )
 
 func TestStat(t *testing.T) {
+	t.Parallel()
+
 	now := time.Now().Unix()
 	hourlater := time.Duration(1) * time.Hour
 	later := now - int64(hourlater.Seconds())

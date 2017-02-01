@@ -2,11 +2,13 @@ package sentry
 
 import (
 	"fmt"
-	"github.com/getsentry/raven-go"
 	"testing"
+
+	"github.com/getsentry/raven-go"
 )
 
 func TestBulkResourceModifyDelete(t *testing.T) {
+	t.Parallel()
 	org, err := client.GetOrganization("sentry")
 	if err != nil {
 		t.Fatal(err)

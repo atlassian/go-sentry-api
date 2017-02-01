@@ -5,6 +5,7 @@ import (
 )
 
 func TestOrganization(t *testing.T) {
+	t.Parallel()
 	t.Run("Organization Create", func(t *testing.T) {
 		org, err := client.CreateOrganization("Test Org via Go Client")
 		if err != nil {

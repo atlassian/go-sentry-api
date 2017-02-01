@@ -5,6 +5,7 @@ import (
 )
 
 func TestReleaseResource(t *testing.T) {
+	t.Parallel()
 	org, err := client.GetOrganization("sentry")
 	if err != nil {
 		t.Fatal(err)

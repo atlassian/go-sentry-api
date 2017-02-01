@@ -51,6 +51,10 @@ func TestUserFeedbackResource(t *testing.T) {
 		})
 	})
 
+	if err := client.DeleteProject(org, project); err != nil {
+		t.Error(err)
+	}
+
 	if err := client.DeleteTeam(org, team); err != nil {
 		t.Error(err)
 	}
