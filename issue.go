@@ -28,12 +28,24 @@ type IssueStats struct {
 	ThirtyDays     *[]Stat `json:"30d,omitempty"`
 }
 
+//IssueTagValue represents a tags value
+type IssueTagValue struct {
+	Count     *int64     `json:"count,omitempty"`
+	FirstSeen *time.Time `json:"firstSeen,omitempty"`
+	ID        *string    `json:"iD,omitempty"`
+	Key       *string    `json:"key,omitempty"`
+	LastSeen  *time.Time `json:"lastSeen,omitempty"`
+	Name      *string    `json:"name,omitempty"`
+	Value     *string    `json:"value,omitempty"`
+}
+
 // IssueTag is a tag used in a sentry issue
 type IssueTag struct {
-	UniqueValues int    `json:"uniqueValues,omitempty"`
-	ID           string `json:"id,omitempty"`
-	Key          string `json:"key,omitempty"`
-	Name         string `json:"name,omitempty"`
+	UniqueValues int             `json:"uniqueValues,omitempty"`
+	ID           string          `json:"id,omitempty"`
+	Key          string          `json:"key,omitempty"`
+	Name         string          `json:"name,omitempty"`
+	TopValues    []IssueTagValue `json:"topValues,omitempty"`
 }
 
 // Issue returns a issue found in sentry
@@ -87,6 +99,27 @@ func (c *Client) GetIssueHashes(i Issue) ([]Hash, *Link, error) {
 	var hashes []Hash
 	link, err := c.doWithPagination("GET", fmt.Sprintf("issues/%s/hashes", *i.ID), &hashes, nil)
 	return hashes, link, err
+}
+
+//GetIssueTags will fetch all tags for a issue
+func (c *Client) GetIssueTags(i Issue) ([]IssueTag, *Link, error) {
+	var tags []IssueTag
+	link, err := c.doWithPagination("GET", fmt.Sprintf("issues/%s/tags", *i.ID), &tags, nil)
+	return tags, link, err
+}
+
+//GetIssueTag will fetch a tag used in a issue. Eg; environment, release, server
+func (c *Client) GetIssueTag(i Issue, tagname string) (IssueTag, error) {
+	var tag IssueTag
+	err := c.do("GET", fmt.Sprintf("issues/%s/tags/%s", *i.ID, tagname), &tag, nil)
+	return tag, err
+}
+
+//GetIssueTagValues will fetch all values for a issues tag
+func (c *Client) GetIssueTagValues(i Issue, tag IssueTag) ([]IssueTagValue, *Link, error) {
+	var values []IssueTagValue
+	link, err := c.doWithPagination("GET", fmt.Sprintf("issues/%s/tags/%s/values", *i.ID, tag.Key), &values, nil)
+	return values, link, err
 }
 
 //GetIssueEvents will fetch all events for a issue

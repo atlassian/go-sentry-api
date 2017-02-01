@@ -63,7 +63,6 @@ func TestIssueResource(t *testing.T) {
 			if len(events) == 0 {
 				t.Error("Should be at least more than 1 event")
 			}
-
 		})
 
 		t.Run("Modify first issue found in project", func(t *testing.T) {
