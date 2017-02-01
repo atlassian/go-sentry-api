@@ -1,4 +1,4 @@
-package sentry
+package interfaces
 
 // Template implements the sentry interface for a template error
 type Template struct {

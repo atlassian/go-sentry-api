@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"bitbucket.org/atlassian/go-sentry-api/interfaces"
 )
 
 // Tag is used for a event
@@ -30,19 +32,19 @@ func (e *Entry) GetInterface() (interface{}, error) {
 	var destination interface{}
 	switch e.Type {
 	case "message":
-		destination = new(Message)
+		destination = new(interfaces.Message)
 	case "stacktrace":
-		destination = new(Stacktrace)
+		destination = new(interfaces.Stacktrace)
 	case "exception":
-		destination = new(Exception)
+		destination = new(interfaces.Exception)
 	case "request":
-		destination = new(Request)
+		destination = new(interfaces.Request)
 	case "template":
-		destination = new(Template)
+		destination = new(interfaces.Template)
 	case "user":
-		destination = new(UserInterface)
+		destination = new(interfaces.User)
 	case "query":
-		destination = new(Query)
+		destination = new(interfaces.Query)
 	}
 
 	err := json.Unmarshal(e.Data, destination)

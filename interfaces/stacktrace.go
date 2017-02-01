@@ -1,4 +1,4 @@
-package sentry
+package interfaces
 
 import (
 	"encoding/json"
