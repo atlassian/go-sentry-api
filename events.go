@@ -31,13 +31,25 @@ type Entry struct {
 func (e *Entry) GetInterface() (string, interface{}, error) {
 	var destination interface{}
 
-	name, inter := datatype.GetMapping(e.Type)
-	if inter != nil {
-		destination = inter
+	switch e.Type {
+	case "message":
+		destination = new(datatype.Message)
+	case "stacktrace":
+		destination = new(datatype.Stacktrace)
+	case "exception":
+		destination = new(datatype.Exception)
+	case "request":
+		destination = new(datatype.Request)
+	case "template":
+		destination = new(datatype.Template)
+	case "user":
+		destination = new(datatype.User)
+	case "query":
+		destination = new(datatype.Query)
 	}
 
 	err := json.Unmarshal(e.Data, &destination)
-	return name, destination, err
+	return e.Type, destination, err
 }
 
 // Event is the event that was created on the app and sentry reported on

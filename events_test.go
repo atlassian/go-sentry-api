@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"bitbucket.org/atlassian/go-sentry-api/datatype"
 	"github.com/getsentry/raven-go"
 )
 
@@ -48,19 +49,37 @@ func TestEventsResource(t *testing.T) {
 
 		for _, issue := range issues {
 
-			latest, err := client.GetLatestEvent(issue)
+			_, err = client.GetLatestEvent(issue)
 			if err != nil {
 				t.Error(err)
 			}
 
-			oldest, err := client.GetOldestEvent(issue)
+			_, err = client.GetOldestEvent(issue)
 			if err != nil {
 				t.Error(err)
 			}
-
-			t.Logf("Issue ID: %s Latest: %v, Oldest: %v \n", *issue.ID, latest, oldest)
 
 		}
+
+		t.Run("Convert all entries to proper types if we can", func(t *testing.T) {
+
+			oldest, err := client.GetOldestEvent(issues[0])
+			if err != nil {
+				t.Error(err)
+			}
+
+			for _, entry := range *oldest.Entries {
+				name, inter, err := entry.GetInterface()
+				if err != nil {
+					t.Error(err)
+				}
+				t.Logf("Name: %s, Interface: %v, Error: %v", name, inter, err)
+
+				if name == "message" {
+					t.Logf("Messages: %v", *inter.(*datatype.Message).Message)
+				}
+			}
+		})
 
 	})
 
