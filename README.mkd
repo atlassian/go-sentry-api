@@ -1,0 +1,68 @@
+# Go Sentry API
+[![godoc](https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667 "Go Doc Reference")](https://godoc.org/github.com/atlassian/go-sentry-api)
+
+
+This is a library that implements a client in go for the [sentry api](http://www.sentry.io/api/). It supports all the endpoints can do a good bit. For a full reference you can check the godoc link above.
+
+## Usage
+### Initialization and Create New DSN Key
+```go
+import (
+	"fmt"
+
+	"github.com/atlassian/go-sentry-api"
+)
+// Auth token is always required, secondary is endpoint and third is timeout defaults 60 seconds
+client := sentry.NewClient("yourauthtokengoeshere", nil, nil)
+
+// Fetch your organization
+org, err := client.GetOrganization("sentry")
+if err != nil {
+	panice(err)
+}
+
+// Fetch a project you already made
+project, err := client.GetProject(org, "my-project-slug")
+if err != nil {
+	panice(err)
+}
+
+// Create a new Client DSN via the API
+key, err := client.CreateClientKey(org, project, "example-dsn")
+if err != nil {
+	panic(err)
+}
+fmt.Printf(key.DSN.Secret)
+
+```
+## Installation
+```
+go get github.com/atlassian/go-sentry-api
+```
+## Documentation
+[![godoc](https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667 "Go Doc Reference")](https://godoc.org/github.com/atlassian/go-sentry-api)
+
+## Tests
+To run tests you can setup a local sentry instance via docker. There is a
+makefile command called `make devenv` which will setup all of the containers.
+
+Once complete you can then setup a environment var of `SENTRY_AUTHTOKEN` and then run `make test` which should go through and create and run all tests aginst localhost:8080
+
+## Contributors
+Pull requests, issues and comments welcome. For pull requests:
+* Add tests for new features and bug fixes
+* Follow the existing style
+* Separate unrelated changes into multiple pull requests
+
+
+See the existing issues for things to start contributing.
+For bigger changes, make sure you start a discussion first by creating an issue and explaining the intended change.
+Atlassian requires contributors to sign a Contributor License Agreement, known as a CLA. This serves as a record stating that the contributor is entitled to contribute the code/documentation/translation to the project and is willing to have it used in distributions and derivative works (or is willing to transfer ownership).
+
+Prior to accepting your contributions we ask that you please follow the appropriate link below to digitally sign the CLA. The Corporate CLA is for those who are contributing as a member of an organization and the individual CLA is for those contributing as an individual.
+
+* [CLA for corporate contributors](https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=e1c17c66-ca4d-4aab-a953-2c231af4a20b)
+* [CLA for individuals](https://na2.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=3f94fbdc-2fbe-46ac-b14c-5d152700ae5d)
+
+## License
+Copyright (c) 2017 Atlassian and others. Apache 2.0 licensed, see LICENSE.txt file.
