@@ -46,6 +46,8 @@ func (e *Entry) GetInterface() (string, interface{}, error) {
 		destination = new(datatype.User)
 	case "query":
 		destination = new(datatype.Query)
+	case "breadcrumbs":
+		destination = new(datatype.Breadcrumb)
 	}
 
 	err := json.Unmarshal(e.Data, &destination)
