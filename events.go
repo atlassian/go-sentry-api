@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"bitbucket.org/atlassian/go-sentry-api/datatype"
+	"github.com/atlassian/go-sentry-api/datatype"
 )
 
 // Tag is used for a event
