@@ -1,3 +1,5 @@
+// Package sentry provides a client to access https://sentry.io/api and sentry
+// instances apis.
 package sentry
 
 import (

@@ -1,12 +1,16 @@
 package sentry
 
 import (
+	"os"
 	"testing"
 )
 
 func TestOrganization(t *testing.T) {
 	t.Parallel()
 	t.Run("Organization Create", func(t *testing.T) {
+		if os.Getenv("TEST_ORGS") == "" {
+			t.Skip("Skipping testing of orgs since TEST_ORGS not set")
+		}
 		org, err := client.CreateOrganization("Test Org via Go Client")
 		if err != nil {
 			if err.(APIError).StatusCode == 429 {
