@@ -46,10 +46,10 @@ func (c *Client) GetRelease(o Organization, p Project, version string) (Release,
 }
 
 // GetReleases will fetch all releases from your org and project
-func (c *Client) GetReleases(o Organization, p Project) ([]Release, error) {
+func (c *Client) GetReleases(o Organization, p Project) ([]Release, *Link, error) {
 	var rel []Release
-	err := c.do("GET", fmt.Sprintf("projects/%s/%s/releases", *o.Slug, *p.Slug), &rel, nil)
-	return rel, err
+	link, err := c.doWithPagination("GET", fmt.Sprintf("projects/%s/%s/releases", *o.Slug, *p.Slug), &rel, nil)
+	return rel, link, err
 }
 
 //CreateRelease will create a new release for a project in a org
