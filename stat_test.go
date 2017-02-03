@@ -12,7 +12,7 @@ func TestStat(t *testing.T) {
 	hourlater := time.Duration(1) * time.Hour
 	later := now - int64(hourlater.Seconds())
 
-	org, err := client.GetOrganization("sentry")
+	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}

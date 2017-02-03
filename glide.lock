@@ -1,5 +1,5 @@
-hash: f8ddd8baac5b82167ec0b6ebe4d426fac581e4eb900e56d3c8708b7c6562039f
-updated: 2017-01-31T10:28:24.820213348-08:00
+hash: bfaf28e11cba895c017efd93cf5deff7e79acf45bdc11278df7298034cb0afb6
+updated: 2017-02-02T16:10:22.76679251-08:00
 imports: []
 testImports:
 - name: github.com/certifi/gocertifi

@@ -9,7 +9,7 @@ import (
 
 func TestBulkResourceModifyDelete(t *testing.T) {
 	t.Parallel()
-	org, err := client.GetOrganization("sentry")
+	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
