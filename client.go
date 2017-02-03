@@ -12,7 +12,7 @@ import (
 
 const (
 	// DefaultHost is the default host that is used
-	DefaultHost = "https://sentry.io/"
+	DefaultHost = "https://sentry.io"
 	// DefaultEndpoint is the entry point for the api
 	DefaultEndpoint = "/api/0/"
 	// DefaultTimeout is the default timeout and is set to 60 seconds
@@ -37,7 +37,7 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 	)
 
 	if endpoint == nil {
-		clientEndpoint = fmt.Sprintf("%s/%s", DefaultHost, DefaultEndpoint)
+		clientEndpoint = fmt.Sprintf("%s%s", DefaultHost, DefaultEndpoint)
 	} else {
 		if *endpoint == "" {
 			return nil, fmt.Errorf("Endpoint can not be a empty string")
