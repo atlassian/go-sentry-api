@@ -61,7 +61,7 @@ func TestReleaseResource(t *testing.T) {
 			t.Error(err)
 		}
 
-		releases, relserr := client.GetReleases(org, project)
+		releases, _, relserr := client.GetReleases(org, project)
 		if relserr != nil {
 			t.Error(relserr)
 		}
