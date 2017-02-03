@@ -37,7 +37,7 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 	)
 
 	if endpoint == nil {
-		clientEndpoint = fmt.Sprintf("%s%s", DefaultHost, DefaultEndpoint)
+		clientEndpoint = fmt.Sprintf("%s/%s", DefaultHost, DefaultEndpoint)
 	} else {
 		if *endpoint == "" {
 			return nil, fmt.Errorf("Endpoint can not be a empty string")
