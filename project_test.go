@@ -27,9 +27,6 @@ func TestProjectResource(t *testing.T) {
 		if endpointproject.Team.Name != "test team for go project" {
 			t.Error("Project fetch didnt have the right team name")
 		}
-		if endpointproject.Organization.Name != "Sentry" {
-			t.Error("Projects organization is not sentry")
-		}
 	})
 
 	t.Run("Fetch all projects", func(t *testing.T) {
