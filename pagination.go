@@ -23,13 +23,13 @@ func NewLink(linkheader string) *Link {
 	link := &Link{}
 	links := strings.SplitN(linkheader, ",", 2)
 	for _, page := range links {
-		data := strings.SplitN(page, ";", 3)
+		data := strings.SplitN(page, ";", 4)
 
-		pagelink := strings.TrimLeft(data[0], "<")
+		pagelink := strings.TrimLeft(strings.TrimSpace(data[0]), "<")
 		pagelink = strings.TrimRight(pagelink, ">")
 
-		pagetype := strings.Trim(strings.Split(data[1], "=")[1], "\"")
-		results, err := strconv.ParseBool(strings.Split(data[2], "=")[1])
+		pagetype := strings.Trim(strings.Split(data[1], "=")[1], `"`)
+		results, err := strconv.ParseBool(strings.Trim(strings.Split(strings.TrimSpace(data[2]), "=")[1], `"`))
 		if err != nil {
 			results = false
 		}
