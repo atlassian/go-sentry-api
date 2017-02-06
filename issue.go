@@ -50,10 +50,20 @@ type IssueTag struct {
 	TopValues    []IssueTagValue `json:"topValues,omitempty"`
 }
 
+//Activity is what current activity has happend on a issue
+type Activity struct {
+	Data        *map[string]interface{} `json:"data,omitempty"`
+	DateCreated *time.Time              `json:"dateCreated,omitempty"`
+	ID          *string                 `json:"id,omitempty"`
+	Type        *string                 `json:"type,omitempty"`
+	User        *User                   `json:"user,omitempty"`
+}
+
 // Issue returns a issue found in sentry
 type Issue struct {
 	Annotations         *[]string          `json:"annotations,omitempty"`
 	AssignedTo          *string            `json:"assignedTo,omitempty"`
+	Actvity             *[]Activity        `json:"activity,omitempty"`
 	Count               *string            `json:"count,omitempty"`
 	Culprit             *string            `json:"culprit,omitempty"`
 	FirstSeen           *time.Time         `json:"firstSeen,omitempty"`
