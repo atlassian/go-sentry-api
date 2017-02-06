@@ -107,7 +107,7 @@ func (i *issueQuery) ToQueryString() string {
 		query.Add("shortIdLookup", strconv.FormatBool(*i.ShortIDLookup))
 	}
 	if i.Query != nil {
-		query.Add("query", *i.Query)
+		query.Add("query", url.QueryEscape(*i.Query))
 	}
 
 	return query.Encode()
