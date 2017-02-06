@@ -18,7 +18,7 @@ func TestEventsResource(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	project, err := client.CreateProject(org, team, "Test go project issues", nil)
+	project, err := client.CreateProject(org, team, "Test go project events resource", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
