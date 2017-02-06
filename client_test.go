@@ -26,3 +26,13 @@ func TestClientBadEndpoint(t *testing.T) {
 		t.Error("Should have gotten an error for an empty endpoint")
 	}
 }
+
+func TestClientKnownGoodEndpoint(t *testing.T) {
+	bclient, berr := NewClient("testauthclient", nil, nil)
+	if berr != nil {
+		t.Error(berr)
+	}
+	if bclient.Endpoint != "https://sentry.io/api/0/" {
+		t.Errorf("Endpoint is not https://sentry.io/api/0 got %s", bclient.Endpoint)
+	}
+}
