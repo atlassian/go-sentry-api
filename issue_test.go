@@ -20,7 +20,7 @@ func TestIssueResource(t *testing.T) {
 	}
 
 	t.Run("Get all issues for a project", func(t *testing.T) {
-		issues, link, err := client.GetIssues(org, project)
+		issues, link, err := client.GetIssues(org, project, nil, nil, nil)
 		if err != nil {
 			t.Error(err)
 		}

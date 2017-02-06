@@ -143,6 +143,14 @@ func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in
 	request.URL.RawQuery = query.ToQueryString()
 	return c.send(request, out)
 }
+func (c *Client) doWithPaginationQuery(method, endpoint string, out, in interface{}, query QueryArgs) (*Link, error) {
+	request, err := c.newRequest(method, endpoint, in)
+	if err != nil {
+		return nil, err
+	}
+	request.URL.RawQuery = query.ToQueryString()
+	return c.sendGetLink(request, out)
+}
 
 func (c *Client) do(method string, endpoint string, out interface{}, in interface{}) error {
 	request, err := c.newRequest(method, endpoint, in)

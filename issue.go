@@ -2,6 +2,8 @@ package sentry
 
 import (
 	"fmt"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -80,10 +82,39 @@ type Issue struct {
 	UserReportCount     *int               `json:"userReportCount,omitempty"`
 }
 
+type issueQuery struct {
+	StatsPeriod   *string
+	ShortIDLookup *bool
+	Query         *string
+}
+
+func (i *issueQuery) ToQueryString() string {
+	query := url.Values{}
+	if i.StatsPeriod != nil {
+		query.Add("statsPeriod", *i.StatsPeriod)
+	}
+	if i.ShortIDLookup != nil {
+		query.Add("shortIdLookup", strconv.FormatBool(*i.ShortIDLookup))
+	}
+	if i.Query != nil {
+		query.Add("query", *i.Query)
+	}
+
+	return query.Encode()
+}
+
 //GetIssues will fetch all issues for organization and project
-func (c *Client) GetIssues(o Organization, p Project) ([]Issue, *Link, error) {
+func (c *Client) GetIssues(o Organization, p Project, StatsPeriod *string, ShortIDLookup *bool, query *string) ([]Issue, *Link, error) {
 	var issues []Issue
-	link, err := c.doWithPagination("GET", fmt.Sprintf("projects/%s/%s/issues", *o.Slug, *p.Slug), &issues, nil)
+
+	issueFilter := &issueQuery{
+		StatsPeriod:   StatsPeriod,
+		ShortIDLookup: ShortIDLookup,
+		Query:         query,
+	}
+
+	link, err := c.doWithPaginationQuery(
+		"GET", fmt.Sprintf("projects/%s/%s/issues", *o.Slug, *p.Slug), &issues, nil, issueFilter)
 	return issues, link, err
 }
 

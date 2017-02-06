@@ -36,7 +36,7 @@ func TestBulkResourceModifyDelete(t *testing.T) {
 	}
 
 	t.Run("Fetch all messages for project", func(t *testing.T) {
-		issues, link, err := client.GetIssues(org, project)
+		issues, link, err := client.GetIssues(org, project, nil, nil, nil)
 		if err != nil {
 			t.Error(err)
 		}

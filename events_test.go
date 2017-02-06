@@ -40,7 +40,7 @@ func TestEventsResource(t *testing.T) {
 		})
 	}
 
-	issues, _, err := client.GetIssues(org, project)
+	issues, _, err := client.GetIssues(org, project, nil, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
