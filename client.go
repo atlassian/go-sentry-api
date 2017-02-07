@@ -135,6 +135,30 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 	return req, nil
 }
 
+func (c *Client) rawRequest(method, endpoint string, in interface{}) (*http.Request, error) {
+	var bodyreader io.Reader
+
+	if in != nil {
+		newbodyreader, err := c.encodeOrError(in)
+		if err != nil {
+			return nil, err
+		}
+		bodyreader = newbodyreader
+	}
+
+	req, err := http.NewRequest(method, c.Endpoint+endpoint, bodyreader)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Close = true
+
+	return req, nil
+
+}
+
 func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryArgs) error {
 	request, err := c.newRequest(method, endpoint, in)
 	if err != nil {
@@ -162,6 +186,15 @@ func (c *Client) do(method string, endpoint string, out interface{}, in interfac
 
 func (c *Client) doWithPagination(method, endpoint string, out, in interface{}) (*Link, error) {
 	request, err := c.newRequest(method, endpoint, in)
+	if err != nil {
+		return nil, err
+	}
+	return c.sendGetLink(request, out)
+}
+
+//rawWithPagination is used when we need to get a raw URL vs a url we combine and comb with newrequest
+func (c *Client) rawWithPagination(method, endpoint string, out, in interface{}) (*Link, error) {
+	request, err := c.rawRequest(method, endpoint, in)
 	if err != nil {
 		return nil, err
 	}

@@ -48,5 +48,5 @@ func NewLink(linkheader string) *Link {
 // GetPage will fetch a page via the Link object and decode it from out.
 // Should be used like `client.GetPage(link.Previous, make([]Organization, 0))`
 func (c *Client) GetPage(p Page, out interface{}) (*Link, error) {
-	return c.doWithPagination("GET", strings.TrimPrefix(p.URL, c.Endpoint), out, nil)
+	return c.rawWithPagination("GET", strings.TrimPrefix(p.URL, c.Endpoint), out, nil)
 }
