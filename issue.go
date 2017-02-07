@@ -82,7 +82,7 @@ type Activity struct {
 // Issue returns a issue found in sentry
 type Issue struct {
 	Annotations         *[]string          `json:"annotations,omitempty"`
-	AssignedTo          *string            `json:"assignedTo,omitempty"`
+	AssignedTo          *InternalUser      `json:"assignedTo,omitempty"`
 	Actvity             *[]Activity        `json:"activity,omitempty"`
 	Count               *string            `json:"count,omitempty"`
 	Culprit             *string            `json:"culprit,omitempty"`
@@ -127,7 +127,7 @@ func (i *issueQuery) ToQueryString() string {
 		query.Add("shortIdLookup", strconv.FormatBool(*i.ShortIDLookup))
 	}
 	if i.Query != nil {
-		query.Add("query", url.QueryEscape(*i.Query))
+		query.Add("query", *i.Query)
 	}
 
 	return query.Encode()
