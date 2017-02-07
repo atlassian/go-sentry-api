@@ -50,13 +50,33 @@ type IssueTag struct {
 	TopValues    []IssueTagValue `json:"topValues,omitempty"`
 }
 
+//Avatar is used for a users avatar
+type Avatar struct {
+	AvatarType *string `json:"avatarType,omitempty"`
+	AvatarUUID *string `json:"avatarUuid,omitempty"`
+}
+
+//InternalUser is a user on sentry and not a external customer
+type InternalUser struct {
+	AvatarURL  *string    `json:"avatarUrl,omitempty"`
+	DateJoined *time.Time `json:"dateJoined,omitempty"`
+	Email      *string    `json:"email,omitempty"`
+	Has2FA     *string    `json:"has2fa,omitempty"`
+	ID         *string    `json:"iD,omitempty"`
+	IsActive   *bool      `json:"isActive,omitempty"`
+	IsMnaaged  *bool      `json:"isMnaaged,omitempty"`
+	LastLogin  *time.Time `json:"lastLogin,omitempty"`
+	Name       *string    `json:"name,omitempty"`
+	Username   *string    `json:"username,omitempty"`
+}
+
 //Activity is what current activity has happend on a issue
 type Activity struct {
 	Data        *map[string]interface{} `json:"data,omitempty"`
 	DateCreated *time.Time              `json:"dateCreated,omitempty"`
 	ID          *string                 `json:"id,omitempty"`
 	Type        *string                 `json:"type,omitempty"`
-	User        *User                   `json:"user,omitempty"`
+	User        *InternalUser           `json:"user,omitempty"`
 }
 
 // Issue returns a issue found in sentry
