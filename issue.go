@@ -61,10 +61,10 @@ type InternalUser struct {
 	AvatarURL  *string    `json:"avatarUrl,omitempty"`
 	DateJoined *time.Time `json:"dateJoined,omitempty"`
 	Email      *string    `json:"email,omitempty"`
-	Has2FA     *string    `json:"has2fa,omitempty"`
+	Has2FA     *bool      `json:"has2fa,omitempty"`
 	ID         *string    `json:"iD,omitempty"`
 	IsActive   *bool      `json:"isActive,omitempty"`
-	IsMnaaged  *bool      `json:"isMnaaged,omitempty"`
+	IsManaged  *bool      `json:"isManaged,omitempty"`
 	LastLogin  *time.Time `json:"lastLogin,omitempty"`
 	Name       *string    `json:"name,omitempty"`
 	Username   *string    `json:"username,omitempty"`
