@@ -1,7 +1,6 @@
 package sentry
 
 import (
-	"net/url"
 	"strconv"
 	"strings"
 )
@@ -49,9 +48,5 @@ func NewLink(linkheader string) *Link {
 // GetPage will fetch a page via the Link object and decode it from out.
 // Should be used like `client.GetPage(link.Previous, make([]Organization, 0))`
 func (c *Client) GetPage(p Page, out interface{}) (*Link, error) {
-	uri, err := url.Parse(p.URL)
-	if err != nil {
-		return nil, err
-	}
-	return c.doWithPagination("GET", strings.TrimLeft(uri.Path, DefaultEndpoint), out, nil)
+	return c.doWithPagination("GET", strings.TrimPrefix(p.URL, c.Endpoint), out, nil)
 }
