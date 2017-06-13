@@ -50,3 +50,10 @@ func (c *Client) UpdateClientKey(o Organization, p Project, k Key, name string) 
 	err := c.do("PUT", fmt.Sprintf("projects/%s/%s/keys/%s", *o.Slug, *p.Slug, k.ID), &key, &req)
 	return key, err
 }
+
+//GetClientKeys fetches all client keys of the given project
+func (c *Client) GetClientKeys(o Organization, p Project) ([]Key, error) {
+	var keys []Key
+	err := c.do("GET", fmt.Sprintf("projects/%s/%s/keys", *o.Slug, *p.Slug), &keys, nil)
+	return keys, err
+}
