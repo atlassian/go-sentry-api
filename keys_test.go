@@ -27,6 +27,15 @@ func TestKeysResource(t *testing.T) {
 		if key.Label != "Test client key" {
 			t.Error("Key does not have correct label")
 		}
+		t.Run("List client keys", func(t *testing.T) {
+			keys, err := client.GetClientKeys(org, project)
+			if err != nil {
+				t.Error(err)
+			}
+			if len(keys) != 2 {
+				t.Errorf("Expected 2 keys, got %d", len(keys))
+			}
+		})
 		t.Run("Update name of client key", func(t *testing.T) {
 
 			key, err = client.UpdateClientKey(org, project, key, "This is a new name")
