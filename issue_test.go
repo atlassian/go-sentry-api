@@ -34,7 +34,7 @@ func TestIssueResource(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if len(issues) < 0 {
+		if len(issues) <= 0 {
 			t.Error("No issues found for this project")
 		}
 		if link.Previous.Results {
