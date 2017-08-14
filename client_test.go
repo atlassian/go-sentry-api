@@ -30,7 +30,7 @@ func getDefaultOrg() string {
 }
 
 func generateIdentifier(prefix string) string {
-	return fmt.Sprintf("Test %s for go-sentry-api-%d", prefix, rand.Int())
+	return fmt.Sprintf("%s %d", prefix, rand.Int())
 }
 
 func TestClientBadEndpoint(t *testing.T) {

@@ -15,10 +15,10 @@ func TestBulkResourceModifyDelete(t *testing.T) {
 	}
 
 	team, cleanup := createTeamHelper(t)
-	defer cleanup()
-
 	project, cleanupproj := createProjectHelper(t, team)
+
 	defer cleanupproj()
+	defer cleanup()
 
 	dsnkey, err := client.CreateClientKey(org, project, "testing key")
 	if err != nil {

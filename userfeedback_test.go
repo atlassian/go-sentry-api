@@ -13,10 +13,10 @@ func TestUserFeedbackResource(t *testing.T) {
 	}
 
 	team, cleanup := createTeamHelper(t)
-	defer cleanup()
-
 	project, cleanupproj := createProjectHelper(t, team)
+
 	defer cleanupproj()
+	defer cleanup()
 
 	t.Run("Submit user feedback without a issue", func(t *testing.T) {
 		issues, _, _ := client.GetIssues(org, project, nil, nil, nil)
