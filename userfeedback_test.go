@@ -22,6 +22,11 @@ func TestUserFeedbackResource(t *testing.T) {
 
 	t.Run("Submit user feedback without a issue", func(t *testing.T) {
 		issues, _, _ := client.GetIssues(org, project, nil, nil, nil)
+
+		if len(issues) <= 0 {
+			t.Fatal("No issues found.")
+		}
+
 		issue := issues[0]
 
 		events, _, _ := client.GetIssueEvents(issue)
