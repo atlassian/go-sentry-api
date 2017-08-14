@@ -37,7 +37,7 @@ func TestProjectResource(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if endpointproject.Team.Name != "test team for go project" {
+		if endpointproject.Team.Name != team.Name {
 			t.Error("Project fetch didnt have the right team name")
 		}
 	})
