@@ -6,18 +6,28 @@ import (
 
 func TestIssueResource(t *testing.T) {
 	t.Parallel()
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project issues", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
+
+	t.Run("Get all issues with a query of resolved", func(t *testing.T) {
+		query := "is:resolved"
+		issues, _, err := client.GetIssues(org, project, nil, nil, &query)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(issues) >= 1 {
+			t.Error("Should have not had any issues marked as resolved")
+		}
+	})
 
 	t.Run("Get all issues for a project", func(t *testing.T) {
 		issues, link, err := client.GetIssues(org, project, nil, nil, nil)

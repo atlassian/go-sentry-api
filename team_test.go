@@ -4,6 +4,24 @@ import (
 	"testing"
 )
 
+func createTeamHelper(t *testing.T) (Team, func() error) {
+
+	org, err := client.GetOrganization(getDefaultOrg())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	team, err := client.CreateTeam(org, generateIdentifier("team"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return team, func() error {
+		return client.DeleteTeam(org, team)
+	}
+
+}
+
 func TestTeamResource(t *testing.T) {
 	t.Parallel()
 

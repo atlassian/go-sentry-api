@@ -10,14 +10,12 @@ func TestKeysResource(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for keys", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project keys", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
 
 	t.Run("Create a new key for project", func(t *testing.T) {
 		key, err := client.CreateClientKey(org, project, "Test client key")
@@ -55,9 +53,5 @@ func TestKeysResource(t *testing.T) {
 			})
 		})
 	})
-
-	if err := client.DeleteTeam(org, team); err != nil {
-		t.Error(err)
-	}
 
 }

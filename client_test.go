@@ -1,21 +1,36 @@
 package sentry
 
 import (
+	"fmt"
+	"log"
+	"math/rand"
 	"os"
 	"testing"
 )
 
-var authtoken = os.Getenv("SENTRY_AUTH_TOKEN")
-var endpoint = os.Getenv("SENTRY_ENDPOINT")
-var defaultorg = os.Getenv("SENTRY_DEFAULT_ORG")
-var client, clienterr = NewClient(authtoken, &endpoint, nil)
+var (
+	authtoken         = os.Getenv("SENTRY_AUTH_TOKEN")
+	endpoint          = os.Getenv("SENTRY_ENDPOINT")
+	defaultorg        = os.Getenv("SENTRY_DEFAULT_ORG")
+	client, clienterr = NewClient(authtoken, &endpoint, nil)
+)
 
 func getDefaultOrg() string {
 	if defaultorg == "" {
 		return "sentry"
 	}
 
+	if authtoken == "" && endpoint == "" {
+		log.Fatalf("Failed to setup tests. Please have SENTRY_AUTH_TOKEN and SENTRY_ENDPOINT set")
+	}
+
+	log.Printf("Using sentry slug organization %s", defaultorg)
+
 	return defaultorg
+}
+
+func generateIdentifier(prefix string) string {
+	return fmt.Sprintf("Test %s for go-sentry-api-%d", prefix, rand.Int())
 }
 
 func TestClientBadEndpoint(t *testing.T) {

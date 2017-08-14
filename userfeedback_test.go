@@ -11,14 +11,12 @@ func TestUserFeedbackResource(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
 
 	t.Run("Submit user feedback without a issue", func(t *testing.T) {
 		issues, _, _ := client.GetIssues(org, project, nil, nil, nil)
@@ -57,11 +55,4 @@ func TestUserFeedbackResource(t *testing.T) {
 		})
 	})
 
-	if err := client.DeleteProject(org, project); err != nil {
-		t.Error(err)
-	}
-
-	if err := client.DeleteTeam(org, team); err != nil {
-		t.Error(err)
-	}
 }

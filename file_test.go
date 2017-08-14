@@ -7,18 +7,18 @@ import (
 
 func TestReleaseFileResource(t *testing.T) {
 	t.Parallel()
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
+
 	newrelease := NewRelease{
 		Version: "1.0.0",
 	}
@@ -83,11 +83,4 @@ func TestReleaseFileResource(t *testing.T) {
 			})
 		})
 	})
-	delprojerr := client.DeleteProject(org, project)
-	if delprojerr != nil {
-		t.Fatal(delprojerr)
-	}
-	if delteam := client.DeleteTeam(org, team); delteam != nil {
-		t.Error(delteam)
-	}
 }
