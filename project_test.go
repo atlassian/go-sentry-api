@@ -4,27 +4,43 @@ import (
 	"testing"
 )
 
+func createProjectHelper(t *testing.T, team Team) (Project, func() error) {
+	client := newTestClient(t)
+	org, err := client.GetOrganization(getDefaultOrg())
+	if err != nil {
+
+		t.Fatal(err)
+	}
+
+	project, err := client.CreateProject(org, team, generateIdentifier("project"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return project, func() error {
+		return client.DeleteProject(org, project)
+	}
+}
+
 func TestProjectResource(t *testing.T) {
 	t.Parallel()
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
 
 	t.Run("Fetch project from endpoint", func(t *testing.T) {
 		endpointproject, err := client.GetProject(org, *project.Slug)
 		if err != nil {
 			t.Error(err)
 		}
-		if endpointproject.Team.Name != "test team for go project" {
+		if endpointproject.Team.Name != team.Name {
 			t.Error("Project fetch didnt have the right team name")
 		}
 	})

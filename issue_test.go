@@ -1,31 +1,58 @@
 package sentry
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/getsentry/raven-go"
 )
 
 func TestIssueResource(t *testing.T) {
-	t.Parallel()
+
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
+
+	dsnkey, err := client.CreateClientKey(org, project, "testing key")
 	if err != nil {
 		t.Fatal(err)
 	}
-	project, err := client.CreateProject(org, team, "Test python project issues", nil)
+
+	ravenClient, err := raven.New(dsnkey.DSN.Secret)
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	for i := 0; i <= 10; i++ {
+		ravenClient.CaptureMessage(fmt.Sprintf("Testing message %d", i), nil, nil)
+	}
+
+	t.Run("Get all issues with a query of resolved", func(t *testing.T) {
+		query := "is:resolved"
+		issues, _, err := client.GetIssues(org, project, nil, nil, &query)
+		if err != nil {
+			t.Error(err)
+		}
+		if len(issues) >= 1 {
+			t.Error("Should have not had any issues marked as resolved")
+		}
+	})
 
 	t.Run("Get all issues for a project", func(t *testing.T) {
 		issues, link, err := client.GetIssues(org, project, nil, nil, nil)
 		if err != nil {
 			t.Error(err)
 		}
-		if len(issues) < 0 {
-			t.Error("No issues found for this project")
+		if len(issues) <= 0 {
+			t.Fatal("No issues found for this project")
 		}
 		if link.Previous.Results {
 			t.Error("Should be no new results")

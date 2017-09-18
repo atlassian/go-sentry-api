@@ -9,18 +9,20 @@ import (
 
 func TestBulkResourceModifyDelete(t *testing.T) {
 	t.Parallel()
+
+	client := newTestClient(t)
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project issues", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	project, cleanupproj := createProjectHelper(t, team)
+
+	defer cleanupproj()
+	defer cleanup()
+
 	dsnkey, err := client.CreateClientKey(org, project, "testing key")
 	if err != nil {
 		t.Fatal(err)
@@ -32,7 +34,7 @@ func TestBulkResourceModifyDelete(t *testing.T) {
 	}
 
 	for i := 0; i <= 100; i++ {
-		ravenClient.CaptureMessage(fmt.Sprintf("Testing message %d", i), nil, nil)
+		ravenClient.CaptureMessageAndWait(fmt.Sprintf("Testing message %d", i), nil, nil)
 	}
 
 	t.Run("Fetch all messages for project", func(t *testing.T) {
@@ -81,7 +83,4 @@ func TestBulkResourceModifyDelete(t *testing.T) {
 		})
 	})
 
-	if err := client.DeleteTeam(org, team); err != nil {
-		t.Error(err)
-	}
 }

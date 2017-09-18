@@ -7,6 +7,8 @@ import (
 
 func TestOrganization(t *testing.T) {
 	t.Parallel()
+
+	client := newTestClient(t)
 	t.Run("Organization Create", func(t *testing.T) {
 		if os.Getenv("TEST_ORGS") == "" {
 			t.Skip("Skipping testing of orgs since TEST_ORGS not set")

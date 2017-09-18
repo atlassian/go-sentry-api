@@ -12,6 +12,8 @@ func TestStat(t *testing.T) {
 	hourlater := time.Duration(1) * time.Hour
 	later := now - int64(hourlater.Seconds())
 
+	client := newTestClient(t)
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
@@ -30,11 +32,11 @@ func TestStat(t *testing.T) {
 			t.Error("No stats were returned")
 		}
 	})
+
 	t.Run("Run Getting Team Stats", func(t *testing.T) {
-		team, err := client.CreateTeam(org, "Test Team for Stats", nil)
-		if err != nil {
-			t.Fatal(err)
-		}
+		team, cleanup := createTeamHelper(t)
+		defer cleanup()
+
 		_, err = client.GetTeamStats(org, team, StatReceived, later, now, nil)
 		if err != nil {
 			t.Error(err)

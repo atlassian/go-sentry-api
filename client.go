@@ -75,7 +75,7 @@ func (c *Client) hasError(response *http.Response) error {
 		}
 
 		if err := json.Unmarshal(body, &apierror); err != nil {
-			return err
+			apierror.Detail = string(body)
 		}
 
 		return error(apierror)
@@ -130,6 +130,7 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 	}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Header.Add("Accept", "application/json")
 	req.Close = true
 
 	return req, nil

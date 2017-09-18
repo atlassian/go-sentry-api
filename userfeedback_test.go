@@ -1,27 +1,47 @@
 package sentry
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/getsentry/raven-go"
 )
 
 func TestUserFeedbackResource(t *testing.T) {
-	t.Parallel()
 
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project", nil)
+
+	team, cleanup := createTeamHelper(t)
+	project, cleanupproj := createProjectHelper(t, team)
+
+	defer cleanupproj()
+	defer cleanup()
+
+	dsnkey, err := client.CreateClientKey(org, project, "testing key")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Run("Submit user feedback without a issue", func(t *testing.T) {
+	ravenClient, err := raven.New(dsnkey.DSN.Secret)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := 0; i <= 10; i++ {
+		ravenClient.CaptureMessageAndWait(fmt.Sprintf("Testing message %d", i), nil, nil)
+	}
+
+	t.Run("Submit user feedback with a issue", func(t *testing.T) {
 		issues, _, _ := client.GetIssues(org, project, nil, nil, nil)
+
+		if len(issues) == 0 {
+			t.Fatal("No issues found.")
+		}
+
 		issue := issues[0]
 
 		events, _, _ := client.GetIssueEvents(issue)
@@ -52,11 +72,4 @@ func TestUserFeedbackResource(t *testing.T) {
 		})
 	})
 
-	if err := client.DeleteProject(org, project); err != nil {
-		t.Error(err)
-	}
-
-	if err := client.DeleteTeam(org, team); err != nil {
-		t.Error(err)
-	}
 }

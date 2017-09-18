@@ -6,18 +6,18 @@ import (
 
 func TestReleaseResource(t *testing.T) {
 	t.Parallel()
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
+
 	t.Run("Create a new release", func(t *testing.T) {
 
 		newrelease := NewRelease{

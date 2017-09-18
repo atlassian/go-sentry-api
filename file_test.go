@@ -2,23 +2,26 @@ package sentry
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 )
 
 func TestReleaseFileResource(t *testing.T) {
 	t.Parallel()
+
+	client := newTestClient(t)
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test python project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
+
 	newrelease := NewRelease{
 		Version: "1.0.0",
 	}
@@ -32,8 +35,10 @@ func TestReleaseFileResource(t *testing.T) {
 			Hello World!
 		`
 
+		filename := fmt.Sprintf("%s-example.txt", project.ID)
+
 		file, err := client.UploadReleaseFile(org, project, release,
-			"example.txt",
+			filename,
 			bytes.NewBuffer([]byte(data)),
 			"Content-Type:text/plain; encoding=utf-8")
 
@@ -41,7 +46,7 @@ func TestReleaseFileResource(t *testing.T) {
 			t.Error("Failed to save file to sentry", err)
 		}
 
-		if file.Name != "example.txt" {
+		if file.Name != filename {
 			t.Error("File did not save as example.txt")
 		}
 		t.Run("Fetch the release files for this release", func(t *testing.T) {
@@ -83,11 +88,4 @@ func TestReleaseFileResource(t *testing.T) {
 			})
 		})
 	})
-	delprojerr := client.DeleteProject(org, project)
-	if delprojerr != nil {
-		t.Fatal(delprojerr)
-	}
-	if delteam := client.DeleteTeam(org, team); delteam != nil {
-		t.Error(delteam)
-	}
 }

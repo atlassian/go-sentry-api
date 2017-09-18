@@ -10,18 +10,20 @@ import (
 
 func TestEventsResource(t *testing.T) {
 	t.Parallel()
+
+	client := newTestClient(t)
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
 	}
-	team, err := client.CreateTeam(org, "test team for go project", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	project, err := client.CreateProject(org, team, "Test go project events resource", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	team, cleanup := createTeamHelper(t)
+	defer cleanup()
+
+	project, cleanupproj := createProjectHelper(t, team)
+	defer cleanupproj()
+
 	dsnkey, err := client.CreateClientKey(org, project, "testing key")
 	if err != nil {
 		t.Fatal(err)
@@ -82,9 +84,5 @@ func TestEventsResource(t *testing.T) {
 		})
 
 	})
-
-	if err := client.DeleteTeam(org, team); err != nil {
-		t.Error(err)
-	}
 
 }
