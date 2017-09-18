@@ -6,7 +6,7 @@ import (
 
 // APIError is used when the api returns back a non 200 response
 type APIError struct {
-	Detail     string `json:"detail"`
+	Detail     string `json:"detail,omitempty"`
 	StatusCode int    `json:"-"`
 }
 

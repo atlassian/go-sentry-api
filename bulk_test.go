@@ -9,6 +9,9 @@ import (
 
 func TestBulkResourceModifyDelete(t *testing.T) {
 	t.Parallel()
+
+	client := newTestClient(t)
+
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +34,7 @@ func TestBulkResourceModifyDelete(t *testing.T) {
 	}
 
 	for i := 0; i <= 100; i++ {
-		ravenClient.CaptureMessage(fmt.Sprintf("Testing message %d", i), nil, nil)
+		ravenClient.CaptureMessageAndWait(fmt.Sprintf("Testing message %d", i), nil, nil)
 	}
 
 	t.Run("Fetch all messages for project", func(t *testing.T) {

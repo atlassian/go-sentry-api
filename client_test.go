@@ -2,31 +2,39 @@ package sentry
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
 	"testing"
 )
 
-var (
-	authtoken         = os.Getenv("SENTRY_AUTH_TOKEN")
-	endpoint          = os.Getenv("SENTRY_ENDPOINT")
-	defaultorg        = os.Getenv("SENTRY_DEFAULT_ORG")
-	client, clienterr = NewClient(authtoken, &endpoint, nil)
-)
-
 func getDefaultOrg() string {
+	defaultorg := os.Getenv("SENTRY_DEFAULT_ORG")
+
 	if defaultorg == "" {
 		return "sentry"
 	}
 
-	if authtoken == "" && endpoint == "" {
-		log.Fatalf("Failed to setup tests. Please have SENTRY_AUTH_TOKEN and SENTRY_ENDPOINT set")
+	return defaultorg
+}
+
+func newTestClient(t *testing.T) *Client {
+	authtoken := os.Getenv("SENTRY_AUTH_TOKEN")
+	endpoint := os.Getenv("SENTRY_ENDPOINT")
+
+	if authtoken == "" {
+		t.Fatal("Need a authtoken to continue. Please set SENTRY_AUTH_TOKEN")
 	}
 
-	log.Printf("Using sentry slug organization %s", defaultorg)
+	if endpoint == "" {
+		endpoint = "https://sentry.io/api/0/"
+	}
 
-	return defaultorg
+	client, clienterr := NewClient(authtoken, &endpoint, nil)
+	if clienterr != nil {
+		t.Fatal(clienterr)
+	}
+
+	return client
 }
 
 func generateIdentifier(prefix string) string {
@@ -36,6 +44,9 @@ func generateIdentifier(prefix string) string {
 func TestClientBadEndpoint(t *testing.T) {
 	t.Parallel()
 	badendpoint := ""
+
+	authtoken := os.Getenv("SENTRY_AUTH_TOKEN")
+
 	_, berr := NewClient(authtoken, &badendpoint, nil)
 	if berr == nil {
 		t.Error("Should have gotten an error for an empty endpoint")

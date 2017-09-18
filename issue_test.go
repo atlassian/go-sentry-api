@@ -1,12 +1,15 @@
 package sentry
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/getsentry/raven-go"
 )
 
 func TestIssueResource(t *testing.T) {
-	t.Parallel()
 
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
@@ -17,6 +20,20 @@ func TestIssueResource(t *testing.T) {
 
 	project, cleanupproj := createProjectHelper(t, team)
 	defer cleanupproj()
+
+	dsnkey, err := client.CreateClientKey(org, project, "testing key")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ravenClient, err := raven.New(dsnkey.DSN.Secret)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := 0; i <= 10; i++ {
+		ravenClient.CaptureMessage(fmt.Sprintf("Testing message %d", i), nil, nil)
+	}
 
 	t.Run("Get all issues with a query of resolved", func(t *testing.T) {
 		query := "is:resolved"
@@ -35,7 +52,7 @@ func TestIssueResource(t *testing.T) {
 			t.Error(err)
 		}
 		if len(issues) <= 0 {
-			t.Error("No issues found for this project")
+			t.Fatal("No issues found for this project")
 		}
 		if link.Previous.Results {
 			t.Error("Should be no new results")

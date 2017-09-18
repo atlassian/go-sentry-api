@@ -6,7 +6,10 @@ import (
 
 func TestKeysResource(t *testing.T) {
 	t.Parallel()
+
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
+
 	if err != nil {
 		t.Fatal(err)
 	}

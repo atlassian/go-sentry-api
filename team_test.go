@@ -6,6 +6,7 @@ import (
 
 func createTeamHelper(t *testing.T) (Team, func() error) {
 
+	client := newTestClient(t)
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
 		t.Fatal(err)
@@ -24,6 +25,7 @@ func createTeamHelper(t *testing.T) (Team, func() error) {
 
 func TestTeamResource(t *testing.T) {
 	t.Parallel()
+	client := newTestClient(t)
 
 	org, err := client.GetOrganization(getDefaultOrg())
 	if err != nil {
