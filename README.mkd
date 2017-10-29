@@ -24,7 +24,7 @@ if err != nil {
 // Fetch a project you already made
 project, err := client.GetProject(org, "my-project-slug")
 if err != nil {
-	panice(err)
+	panic(err)
 }
 
 // Create a new Client DSN via the API
