@@ -18,7 +18,7 @@ client := sentry.NewClient("yourauthtokengoeshere", nil, nil)
 // Fetch your organization
 org, err := client.GetOrganization("sentry")
 if err != nil {
-	panice(err)
+	panic(err)
 }
 
 // Fetch a project you already made
