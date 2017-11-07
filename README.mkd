@@ -13,18 +13,18 @@ import (
 	"github.com/atlassian/go-sentry-api"
 )
 // Auth token is always required, secondary is endpoint and third is timeout defaults 60 seconds
-client := sentry.NewClient("yourauthtokengoeshere", nil, nil)
+client, _:= sentry.NewClient("yourauthtokengoeshere", nil, nil)
 
 // Fetch your organization
 org, err := client.GetOrganization("sentry")
 if err != nil {
-	panice(err)
+	panic(err)
 }
 
 // Fetch a project you already made
 project, err := client.GetProject(org, "my-project-slug")
 if err != nil {
-	panice(err)
+	panic(err)
 }
 
 // Create a new Client DSN via the API
