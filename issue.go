@@ -83,7 +83,7 @@ type Activity struct {
 type Issue struct {
 	Annotations         *[]string          `json:"annotations,omitempty"`
 	AssignedTo          *InternalUser      `json:"assignedTo,omitempty"`
-	Actvity             *[]Activity        `json:"activity,omitempty"`
+	Activity            *[]Activity        `json:"activity,omitempty"`
 	Count               *string            `json:"count,omitempty"`
 	Culprit             *string            `json:"culprit,omitempty"`
 	FirstSeen           *time.Time         `json:"firstSeen,omitempty"`
