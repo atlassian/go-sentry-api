@@ -47,6 +47,10 @@ func TestEventsResource(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if len(issues) == 0 {
+		t.Fatalf("no issues found for project %s", project.Name)
+	}
+
 	t.Run("Read out all events for a issue", func(t *testing.T) {
 
 		for _, issue := range issues {
