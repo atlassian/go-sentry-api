@@ -41,6 +41,16 @@ func TestTeamResource(t *testing.T) {
 		}
 	})
 
+	t.Run("Fetch the team", func(t *testing.T) {
+		team, err := client.GetTeam(org, *team.Slug)
+		if err != nil {
+			t.Error(err)
+		}
+		if team.Name != "Test team for Go Client" {
+			t.Error("Failed to fetch team on server side")
+		}
+	})
+
 	t.Run("Update the team name", func(t *testing.T) {
 		team.Name = "Updated team name for testing"
 		err := client.UpdateTeam(org, team)

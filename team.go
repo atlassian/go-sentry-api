@@ -30,6 +30,13 @@ func (c *Client) CreateTeam(o Organization, name string, slug *string) (Team, er
 	return team, err
 }
 
+// GetTeam takes a team slug and returns back the team
+func (c *Client) GetTeam(o Organization, teamSlug string) (Team, error) {
+	var team Team
+	err := c.do("GET", fmt.Sprintf("teams/%s/%s", *o.Slug, teamSlug), &team, nil)
+	return team, err
+}
+
 // UpdateTeam will update a team on the server side
 func (c *Client) UpdateTeam(o Organization, t Team) error {
 	return c.do("PUT", fmt.Sprintf("teams/%s/%s", *o.Slug, *t.Slug), &t, &t)
