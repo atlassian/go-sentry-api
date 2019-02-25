@@ -73,7 +73,7 @@ type Event struct {
 	Entries         *[]Entry                `json:"entries,omitempty"`
 	Packages        *map[string]string      `json:"packages,omitempty"`
 	SDK             *map[string]interface{} `json:"sdk,omitempty"`
-	Contexts        *map[string]string      `json:"contexts,omitempty"`
+	Contexts        *map[string]interface{} `json:"contexts,omitempty"`
 	Context         *map[string]interface{} `json:"context,omitempty"`
 	Release         *Release                `json:"release,omitempty"`
 	GroupID         *string                 `json:"groupID,omitempty"`
