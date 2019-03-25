@@ -27,6 +27,7 @@ type Organization struct {
 	ID                   *string    `json:"id,omitempty"`
 	IsEarlyAdopter       *bool      `json:"isEarlyAdopter,omitempty"`
 	Features             *[]string  `json:"features,omitempty"`
+	Projects             *[]Project `json:"projects,omitempty"`
 }
 
 // GetOrganization takes a org slug and returns back the org

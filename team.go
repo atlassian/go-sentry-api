@@ -15,7 +15,6 @@ type Team struct {
 	DateCreated *time.Time `json:"dateCreated,omitempty"`
 	IsMember    *bool      `json:"isMember,omitempty"`
 	ID          *string    `json:"id,omitempty"`
-	Projects    *[]Project `json:"projects,omitempty"`
 }
 
 // CreateTeam creates a team with a organization object and requires a name and a optional slug
