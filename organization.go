@@ -16,6 +16,12 @@ type Quota struct {
 	MaxRate      int `json:"maxRate"`
 }
 
+// OrgStatus is the status of a organization
+type OrgStatus struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 // Organization is your sentry organization.
 type Organization struct {
 	PendingAccessRequest *int       `json:"pendingAccessRequests,omitempty"`
@@ -28,6 +34,7 @@ type Organization struct {
 	IsEarlyAdopter       *bool      `json:"isEarlyAdopter,omitempty"`
 	Features             *[]string  `json:"features,omitempty"`
 	Projects             *[]Project `json:"projects,omitempty"`
+	Status               *OrgStatus `json:"status"`
 }
 
 // GetOrganization takes a org slug and returns back the org
