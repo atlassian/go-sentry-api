@@ -37,3 +37,8 @@ func (c *Client) InviteMember(o Organization, email, role string) (Member, error
 func (c *Client) RemoveMember(o Organization, m Member) error {
 	return c.do(http.MethodDelete, fmt.Sprintf("organizations/%s/%s", *o.Slug, *m.ID), nil, nil)
 }
+
+// UpdateMember updates role of a member
+func (c *Client) UpdateMember(o Organization, m Member) error {
+	return c.do(http.MethodPut, fmt.Sprintf("organizations/%s/members/%s", *o.Slug, *m.ID), &m, &m)
+}
