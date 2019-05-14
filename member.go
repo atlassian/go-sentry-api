@@ -32,6 +32,13 @@ func (c *Client) InviteMember(o Organization, email, role string, teams []string
 	return member, err
 }
 
+// GetMember returns a member
+func (c *Client) GetMember(o Organization, memberID string) (Member, error) {
+	var member Member
+	err := c.do("GET", fmt.Sprintf("organizations/%s/members/%s", *o.Slug, memberID), &member, nil)
+	return member, err
+}
+
 // RemoveMember removes a member from a organization
 func (c *Client) RemoveMember(o Organization, m Member) error {
 	return c.do(http.MethodDelete, fmt.Sprintf("organizations/%s/members/%s", *o.Slug, *m.ID), nil, nil)
