@@ -14,19 +14,18 @@ type Member struct {
 	User        *User     `json:"user"`
 	DateCreated time.Time `json:"dateCreated"`
 	ID          *string   `json:"id,omitempty"`
+	Teams       []string  `json:"teams"`
 	Pending     *bool     `json:"pending"`
 	Email       string    `json:"email,omitempty"`
 }
 
 // InviteMember invites a member to join a organization
-func (c *Client) InviteMember(o Organization, email, role string) (Member, error) {
+func (c *Client) InviteMember(o Organization, email, role string, teams []string) (Member, error) {
 	var member Member
 	memberreq := &Member{
-		User: &User{
-			Username: &email,
-		},
 		Email: email,
 		Role:  role,
+		Teams: teams,
 	}
 
 	err := c.do(http.MethodPost, fmt.Sprintf("organizations/%s/members", *o.Slug), &member, memberreq)
