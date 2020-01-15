@@ -30,6 +30,13 @@ func (c *Client) CreateTeam(o Organization, name string, slug *string) (Team, er
 	return team, err
 }
 
+// GetTeams will take a organization and retrieve a list of teams
+func (c *Client) GetTeams(o Organization) ([]Team, *Link, error) {
+	teams := make([]Team, 0)
+	link, err := c.doWithPagination(http.MethodGet, fmt.Sprintf("organizations/%s/teams", *o.Slug), &teams, nil)
+	return teams, link, err
+}
+
 // GetTeam takes a team slug and returns back the team
 func (c *Client) GetTeam(o Organization, teamSlug string) (Team, error) {
 	var team Team

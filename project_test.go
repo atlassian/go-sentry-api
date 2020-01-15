@@ -46,7 +46,7 @@ func TestProjectResource(t *testing.T) {
 	})
 
 	t.Run("Fetch all projects", func(t *testing.T) {
-		projects, err := client.GetProjects()
+		projects, _, err := client.GetProjects()
 		if err != nil {
 			t.Error(err)
 		}

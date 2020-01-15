@@ -72,10 +72,17 @@ func (c *Client) UpdateProject(o Organization, p Project) error {
 }
 
 // GetProjects fetchs all projects in a sentry instance
-func (c *Client) GetProjects() ([]Project, error) {
+func (c *Client) GetProjects() ([]Project, *Link, error) {
 	var proj []Project
-	err := c.do("GET", "projects", &proj, nil)
-	return proj, err
+	link, err := c.doWithPagination("GET", "projects", &proj, nil)
+	return proj, link, err
+}
+
+// GetOrgProjects fetchs all projects belonging to a organization
+func (c *Client) GetOrgProjects(o Organization) ([]Project, *Link, error) {
+	var proj []Project
+	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/projects/", *o.Slug), &proj, nil)
+	return proj, link, err
 }
 
 // DeleteProject will take your org, team, and proj and delete it from sentry.
