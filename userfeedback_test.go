@@ -45,6 +45,9 @@ func TestUserFeedbackResource(t *testing.T) {
 		issue := issues[0]
 
 		events, _, _ := client.GetIssueEvents(issue)
+		if len(events) == 0 {
+			t.Fatal("no events found")
+		}
 
 		feedback := NewUserFeedback("Colin Wood", "This is a great feature", "cwood@testing.com", events[0].EventID)
 

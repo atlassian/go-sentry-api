@@ -70,7 +70,7 @@ type Event struct {
 	DateCreated     *time.Time              `json:"dateCreated,omitempty"`
 	DateReceived    *time.Time              `json:"dateReceived,omitempty"`
 	User            *User                   `json:"user,omitempty"`
-	Entries         *[]Entry                `json:"entries,omitempty"`
+	Entries         []Entry                 `json:"entries,omitempty"`
 	Packages        *map[string]string      `json:"packages,omitempty"`
 	SDK             *map[string]interface{} `json:"sdk,omitempty"`
 	Contexts        *map[string]interface{} `json:"contexts,omitempty"`

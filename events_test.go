@@ -74,7 +74,11 @@ func TestEventsResource(t *testing.T) {
 				t.Error(err)
 			}
 
-			for _, entry := range *oldest.Entries {
+			if len(oldest.Entries) == 0 {
+				t.Fatal("no entries found and is nil")
+			}
+
+			for _, entry := range oldest.Entries {
 				name, inter, err := entry.GetInterface()
 				if err != nil {
 					t.Error(err)
@@ -82,7 +86,15 @@ func TestEventsResource(t *testing.T) {
 				t.Logf("Name: %s, Interface: %v, Error: %v", name, inter, err)
 
 				if name == "message" {
-					t.Logf("Messages: %v", *inter.(*datatype.Message).Message)
+					if inter == nil {
+						t.Error("iter message is nil")
+					}
+
+					if m := inter.(*datatype.Message); m != nil {
+						t.Logf("Messages: %v", m.Message)
+					} else {
+						t.Errorf("Message is nil %v", m)
+					}
 				}
 			}
 		})
