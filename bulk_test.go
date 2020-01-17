@@ -1,14 +1,10 @@
 package sentry
 
 import (
-	"fmt"
 	"testing"
-
-	"github.com/getsentry/raven-go"
 )
 
 func TestBulkResourceModifyDelete(t *testing.T) {
-	t.Parallel()
 
 	client := newTestClient(t)
 
@@ -23,19 +19,7 @@ func TestBulkResourceModifyDelete(t *testing.T) {
 	defer cleanupproj()
 	defer cleanup()
 
-	dsnkey, err := client.CreateClientKey(org, project, "testing key")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ravenClient, err := raven.New(dsnkey.DSN.Secret)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for i := 0; i <= 100; i++ {
-		ravenClient.CaptureMessageAndWait(fmt.Sprintf("Testing message %d", i), nil, nil)
-	}
+	createMessagesHelper(t, client, org, project, 10)
 
 	t.Run("Fetch all messages for project", func(t *testing.T) {
 		issues, link, err := client.GetIssues(org, project, nil, nil, nil)

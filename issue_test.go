@@ -4,8 +4,34 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/getsentry/raven-go"
+	raven "github.com/getsentry/sentry-go"
 )
+
+func createMessagesHelper(t *testing.T, client *Client, org Organization, project Project, numOfMessages int) {
+
+	dsnkey, err := client.CreateClientKey(org, project, "testing key")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	scope := raven.NewScope()
+	scope.SetExtra("server", "app-node-01")
+
+	ravenClient, err := raven.NewClient(raven.ClientOptions{
+		Dsn:       dsnkey.DSN.Secret,
+		Transport: raven.NewHTTPSyncTransport(),
+	})
+
+	hub := raven.NewHub(ravenClient, scope)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := 0; i <= numOfMessages; i++ {
+		hub.CaptureMessage(fmt.Sprintf("failed to execute on id %d", i))
+	}
+}
 
 func TestIssueResource(t *testing.T) {
 
@@ -21,19 +47,7 @@ func TestIssueResource(t *testing.T) {
 	project, cleanupproj := createProjectHelper(t, team)
 	defer cleanupproj()
 
-	dsnkey, err := client.CreateClientKey(org, project, "testing key")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ravenClient, err := raven.New(dsnkey.DSN.Secret)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for i := 0; i <= 10; i++ {
-		ravenClient.CaptureMessage(fmt.Sprintf("Testing message %d", i), nil, nil)
-	}
+	createMessagesHelper(t, client, org, project, 10)
 
 	t.Run("Get all issues with a query of resolved", func(t *testing.T) {
 		query := "is:resolved"
@@ -88,7 +102,7 @@ func TestIssueResource(t *testing.T) {
 				t.Error(err)
 			}
 			if len(events) == 0 {
-				t.Error("Should be at least more than 1 event")
+				t.Errorf("Should be at least more than 1 event %v", events)
 			}
 		})
 

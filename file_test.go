@@ -71,12 +71,12 @@ func TestReleaseFileResource(t *testing.T) {
 		})
 		t.Run("Update name of release file", func(t *testing.T) {
 
-			file.Name = "Something else related"
+			file.Name = "Something/else/related"
 			err := client.UpdateReleaseFile(org, project, release, file)
 			if err != nil {
 				t.Error(err)
 			}
-			if file.Name != "Something else related" {
+			if file.Name != "Something/else/related" {
 				t.Error("File update did not change name")
 			}
 
