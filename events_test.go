@@ -1,15 +1,12 @@
 package sentry
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/atlassian/go-sentry-api/datatype"
-	"github.com/getsentry/raven-go"
 )
 
 func TestEventsResource(t *testing.T) {
-	t.Parallel()
 
 	client := newTestClient(t)
 
@@ -24,23 +21,7 @@ func TestEventsResource(t *testing.T) {
 	project, cleanupproj := createProjectHelper(t, team)
 	defer cleanupproj()
 
-	dsnkey, err := client.CreateClientKey(org, project, "testing key")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ravenClient, err := raven.New(dsnkey.DSN.Secret)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for i := 0; i < 10; i++ {
-		ravenClient.CaptureMessageAndWait(fmt.Sprintf("Testing message %d", i), map[string]string{
-			"server": fmt.Sprintf("%d-app-node", i),
-		}, &raven.Message{
-			Message: fmt.Sprintf("Testing some stuff out Brah %d", i),
-		})
-	}
+	createMessagesHelper(t, client, org, project, 10)
 
 	issues, _, err := client.GetIssues(org, project, nil, nil, nil)
 	if err != nil {
@@ -54,6 +35,8 @@ func TestEventsResource(t *testing.T) {
 	t.Run("Read out all events for a issue", func(t *testing.T) {
 
 		for _, issue := range issues {
+
+			t.Logf("Issue: %s", *issue.ID)
 
 			_, err = client.GetLatestEvent(issue)
 			if err != nil {

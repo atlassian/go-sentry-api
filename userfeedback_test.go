@@ -1,10 +1,7 @@
 package sentry
 
 import (
-	"fmt"
 	"testing"
-
-	"github.com/getsentry/raven-go"
 )
 
 func TestUserFeedbackResource(t *testing.T) {
@@ -21,19 +18,7 @@ func TestUserFeedbackResource(t *testing.T) {
 	defer cleanupproj()
 	defer cleanup()
 
-	dsnkey, err := client.CreateClientKey(org, project, "testing key")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	ravenClient, err := raven.New(dsnkey.DSN.Secret)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	for i := 0; i <= 10; i++ {
-		ravenClient.CaptureMessageAndWait(fmt.Sprintf("Testing message %d", i), nil, nil)
-	}
+	createMessagesHelper(t, client, org, project, 10)
 
 	t.Run("Submit user feedback with a issue", func(t *testing.T) {
 		issues, _, _ := client.GetIssues(org, project, nil, nil, nil)
