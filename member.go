@@ -48,7 +48,7 @@ func (c *Client) GetMemberByEmail(o Organization, memberEmail string) (Member, e
 
 	err := c.doWithQuery("GET", fmt.Sprintf("organizations/%s/members", *o.Slug), &members, nil, &memberQuery{memberEmail})
 	if err != nil {
-		return Member{}, fmt.Errorf("failed to get member: %w", err)
+		return Member{}, fmt.Errorf("failed to get member with error: %s", err.Error())
 	}
 
 	if len(members) == 0 {
