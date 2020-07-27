@@ -27,6 +27,7 @@ type Status string
 // IssueStats is the stats of a issue
 type IssueStats struct {
 	TwentyFourHour *[]Stat `json:"24h,omitempty"`
+	FourteenDays   *[]Stat `json:"14d,omitempty"`
 	ThirtyDays     *[]Stat `json:"30d,omitempty"`
 }
 
