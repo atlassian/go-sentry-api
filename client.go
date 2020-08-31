@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -124,7 +125,12 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 		bodyreader = newbodyreader
 	}
 
-	req, err := http.NewRequest(method, c.Endpoint+endpoint+"/", bodyreader)
+	finalEndpoint := c.Endpoint+endpoint
+	if !strings.HasSuffix(endpoint, "/")  {
+		finalEndpoint = finalEndpoint + "/"
+	}
+
+	req, err := http.NewRequest(method, finalEndpoint, bodyreader)
 	if err != nil {
 		return nil, err
 	}

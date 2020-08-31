@@ -62,3 +62,19 @@ func TestClientKnownGoodEndpoint(t *testing.T) {
 		t.Errorf("Endpoint is not https://sentry.io/api/0 got %s", bclient.Endpoint)
 	}
 }
+
+func TestNewRequestWillNotAddExtraTrailingSlashToEndpoint(t *testing.T) {
+	endpoint := "some-endpoint/"
+	bclient, berr := NewClient("testauthclient", nil, nil)
+	if berr != nil {
+		t.Error(berr)
+	}
+	req, err := bclient.newRequest("get", endpoint, nil)
+	if req == nil || err != nil {
+		t.Errorf("can't generate request: %v", err)
+	}
+
+	if req.URL.String() != "https://sentry.io/api/0/some-endpoint/" {
+		t.Errorf("Endpoint is not https://sentry.io/api/0/some-endpoint/ got %s", req.URL.String())
+	}
+}
