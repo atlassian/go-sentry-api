@@ -71,7 +71,7 @@ func TestNewRequestWillNotAddExtraTrailingSlashToEndpoint(t *testing.T) {
 	}
 	req, err := bclient.newRequest("get", endpoint, nil)
 	if req == nil || err != nil {
-		t.Errorf("can't genearte request: %v", err)
+		t.Errorf("can't generate request: %v", err)
 	}
 
 	if req.URL.String() != "https://sentry.io/api/0/some-endpoint/" {
