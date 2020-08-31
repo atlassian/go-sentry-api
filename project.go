@@ -81,7 +81,7 @@ func (c *Client) GetProjects() ([]Project, *Link, error) {
 // GetOrgProjects fetchs all projects belonging to a organization
 func (c *Client) GetOrgProjects(o Organization) ([]Project, *Link, error) {
 	var proj []Project
-	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/projects/", *o.Slug), &proj, nil)
+	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/projects", *o.Slug), &proj, nil)
 	return proj, link, err
 }
 
