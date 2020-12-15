@@ -125,8 +125,8 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 		bodyreader = newbodyreader
 	}
 
-	finalEndpoint := c.Endpoint+endpoint
-	if !strings.HasSuffix(endpoint, "/")  {
+	finalEndpoint := c.Endpoint + endpoint
+	if !strings.HasSuffix(endpoint, "/") {
 		finalEndpoint = finalEndpoint + "/"
 	}
 
