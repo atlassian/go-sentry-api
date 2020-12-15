@@ -127,12 +127,24 @@ func TestIssueResource(t *testing.T) {
 
 			resolved := Resolved
 			firstIssue.Status = &resolved
+			firstIssue.StatusDetails = &map[string]interface{}{
+				"inNextRelease": true,
+			}
 
 			if err := client.UpdateIssue(firstIssue); err != nil {
 				t.Error(err)
 			}
 
 			if *firstIssue.Status != Resolved {
+				t.Error("Status did not get updated")
+			}
+
+			details, ok := (*firstIssue.StatusDetails)["inNextRelease"].(bool)
+			if !ok {
+				t.Error("Status did not get updated")
+			}
+
+			if !details {
 				t.Error("Status did not get updated")
 			}
 
