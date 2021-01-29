@@ -83,7 +83,7 @@ func TestIssueResource(t *testing.T) {
 			}
 			for _, issue := range issues {
 				if issue.Stats.FourteenDays == nil {
-					t.Fatal("We should be able to get 14 days of stats for this issue but didn't.")
+					t.Fatal("We should be able to get 14 days of stats for this issue but didn't")
 				}
 			}
 		})
@@ -127,6 +127,9 @@ func TestIssueResource(t *testing.T) {
 
 			resolved := Resolved
 			firstIssue.Status = &resolved
+			firstIssue.StatusDetails = &map[string]interface{}{
+				"inNextRelease": true,
+			}
 
 			if err := client.UpdateIssue(firstIssue); err != nil {
 				t.Error(err)
@@ -134,6 +137,15 @@ func TestIssueResource(t *testing.T) {
 
 			if *firstIssue.Status != Resolved {
 				t.Error("Status did not get updated")
+			}
+
+			details, ok := (*firstIssue.StatusDetails)["inNextRelease"].(bool)
+			if !ok {
+				t.Error("Status details did not get updated")
+			}
+
+			if !details {
+				t.Error("Status details did not get updated")
 			}
 
 			t.Run("Delete the first issue in this project", func(t *testing.T) {

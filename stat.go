@@ -27,11 +27,11 @@ func (o *statRequest) ToQueryString() string {
 	query.Add("stat", string(o.Stat))
 	query.Add("since", strconv.FormatInt(o.Since, 10))
 	query.Add("until", strconv.FormatInt(o.Until, 10))
-	
+
 	if o.Resolution != nil {
-	    query.Add("resolution", string(*o.Resolution))
+		query.Add("resolution", string(*o.Resolution))
 	}
-	
+
 	return query.Encode()
 }
 
