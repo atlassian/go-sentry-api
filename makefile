@@ -19,5 +19,5 @@ devenv:
 	docker run -d --name sentry-worker-1 -e SENTRY_SECRET_KEY='${STUPIDSECRET}' --link sentry-postgres:postgres --link sentry-redis:redis sentry:latest run worker
 
 devclean:
-	docker kill $$(docker ps -q)
-	docker rm $$(docker ps -a -q)
+	docker kill $$(docker ps -q -a --no-trunc --filter name=^sentry)
+	docker rm $$(docker ps -q -a --no-trunc --filter name=^sentry)
