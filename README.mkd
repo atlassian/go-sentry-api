@@ -2,7 +2,7 @@
 [![godoc](https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667 "Go Doc Reference")](https://godoc.org/github.com/atlassian/go-sentry-api) [![Build Status](https://travis-ci.org/atlassian/go-sentry-api.svg?branch=master)](https://travis-ci.org/atlassian/go-sentry-api)
 
 
-This is a library that implements a client in go for the [sentry api](http://www.sentry.io/api/). It supports all the endpoints and can do a good bit. For a full reference you can check the godoc link above.
+This is a library that implements a client in go for the [sentry api](https://docs.sentry.io/api/). It supports all the endpoints and can do a good bit. For a full reference you can check the godoc link above.
 
 ## Usage
 ### Initialization and Create New DSN Key

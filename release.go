@@ -38,6 +38,26 @@ type NewRelease struct {
 	DateReleased *time.Time `json:"dateReleased,omitempty"`
 }
 
+type Deploy struct {
+	ID              *string     `json:"id,omitempty"`
+	Name 			string		`json:"name,omitempty"`
+	URL          	*string		`json:"url,omitempty"`
+	DateStarted 	*time.Time	`json:"dateStarted,omitempty"`
+	DateFinished 	*time.Time	`json:"dateFinished,omitempty"`
+	Environment 	string		`json:"environment"`
+}
+
+type NewDeploy struct {
+	// Required for creating the deploy
+	Environment 	string		`json:"environment"`
+
+	// Optional parameters for creating the deploy
+	Name 			string		`json:"name,omitempty"`
+	URL          	*string		`json:"url,omitempty"`
+	DateStarted *time.Time `json:"dateStarted,omitempty"`
+	DateFinished *time.Time `json:"dateReleased,omitempty"`
+}
+
 // GetRelease will fetch a release from your org and project this does need a version string
 func (c *Client) GetRelease(o Organization, p Project, version string) (Release, error) {
 	var rel Release
@@ -68,4 +88,17 @@ func (c *Client) UpdateRelease(o Organization, p Project, r Release) error {
 //DeleteRelease will delete the release from your project
 func (c *Client) DeleteRelease(o Organization, p Project, r Release) error {
 	return c.do("DELETE", fmt.Sprintf("projects/%s/%s/releases/%s", *o.Slug, *p.Slug, r.Version), nil, nil)
+}
+
+// CreateDeploy will create a deploy in your org for a given version
+func (c *Client) CreateDeploy(o Organization, version string, d NewDeploy) (Deploy, error){
+	var dep Deploy
+	err := c.do("POST", fmt.Sprintf("organizations/%s/releases/%s/deploys", *o.Slug, version), &dep, &d)
+	return dep, err
+}
+
+func (c *Client) ListDeploys(o Organization, version string) ([]Deploy, *Link, error) {
+	var dep []Deploy
+	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/releases/%s/deploys", *o.Slug, version), &dep, nil)
+	return dep, link, err
 }
