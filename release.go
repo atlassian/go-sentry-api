@@ -39,22 +39,22 @@ type NewRelease struct {
 }
 
 type Deploy struct {
-	ID              *string     `json:"id,omitempty"`
-	Name 			string		`json:"name,omitempty"`
-	URL          	*string		`json:"url,omitempty"`
-	DateStarted 	*time.Time	`json:"dateStarted,omitempty"`
-	DateFinished 	*time.Time	`json:"dateFinished,omitempty"`
-	Environment 	string		`json:"environment"`
+	ID           string     `json:"id"`
+	Name         *string    `json:"name,omitempty"`
+	URL          *string    `json:"url,omitempty"`
+	DateStarted  *time.Time `json:"dateStarted,omitempty"`
+	DateFinished *time.Time `json:"dateFinished,omitempty"`
+	Environment  string     `json:"environment"`
 }
 
 type NewDeploy struct {
 	// Required for creating the deploy
-	Environment 	string		`json:"environment"`
+	Environment string `json:"environment"`
 
 	// Optional parameters for creating the deploy
-	Name 			string		`json:"name,omitempty"`
-	URL          	*string		`json:"url,omitempty"`
-	DateStarted *time.Time `json:"dateStarted,omitempty"`
+	Name         *string    `json:"name,omitempty"`
+	URL          *string    `json:"url,omitempty"`
+	DateStarted  *time.Time `json:"dateStarted,omitempty"`
 	DateFinished *time.Time `json:"dateReleased,omitempty"`
 }
 
@@ -91,14 +91,15 @@ func (c *Client) DeleteRelease(o Organization, p Project, r Release) error {
 }
 
 // CreateDeploy will create a deploy in your org for a given version
-func (c *Client) CreateDeploy(o Organization, version string, d NewDeploy) (Deploy, error){
+func (c *Client) CreateDeploy(o Organization, r Release, d NewDeploy) (Deploy, error) {
 	var dep Deploy
-	err := c.do("POST", fmt.Sprintf("organizations/%s/releases/%s/deploys", *o.Slug, version), &dep, &d)
+	err := c.do("POST", fmt.Sprintf("organizations/%s/releases/%s/deploys", *o.Slug, r.Version), &dep, &d)
 	return dep, err
 }
 
-func (c *Client) ListDeploys(o Organization, version string) ([]Deploy, *Link, error) {
+// ListDeploys will list the deploys for a given release.
+func (c *Client) ListDeploys(o Organization, r Release) ([]Deploy, *Link, error) {
 	var dep []Deploy
-	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/releases/%s/deploys", *o.Slug, version), &dep, nil)
+	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/releases/%s/deploys", *o.Slug, r.Version), &dep, nil)
 	return dep, link, err
 }

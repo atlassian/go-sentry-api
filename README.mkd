@@ -46,7 +46,10 @@ go get github.com/atlassian/go-sentry-api
 To run tests you can setup a local sentry instance via docker. There is a
 makefile command called `make devenv` which will setup all of the containers.
 
-Once complete you can then setup a environment var of `SENTRY_AUTHTOKEN` and then run `make test` which should go through and create and run all tests aginst localhost:8080
+Visit [account settings](http://localhost:8080/settings/account/api/auth-tokens/) to set up your `SENTRY_AUTHTOKEN`.
+
+Once complete you can then setup a environment var of `SENTRY_AUTHTOKEN` and then run `make test`
+which should go through and create and run all tests against localhost:8080
 
 ## Contributors
 Pull requests, issues and comments welcome. For pull requests:

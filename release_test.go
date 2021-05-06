@@ -71,6 +71,33 @@ func TestReleaseResource(t *testing.T) {
 		}
 
 	})
+	t.Run("Create a deploy for a release", func(t *testing.T) {
+
+		newrelease := NewRelease{
+			Version: "1.0.0",
+		}
+		release, err := client.CreateRelease(org, project, newrelease)
+		if err != nil {
+			t.Fatal(err)
+		}
+		newDeploy := NewDeploy{
+			Environment: "production",
+		}
+		_, err = client.CreateDeploy(org, release, newDeploy)
+		if err != nil {
+			t.Error(err)
+		}
+
+		deploys, _, err := client.ListDeploys(org, release)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if len(deploys) == 0 {
+			t.Error("Should be at least one deploy")
+		}
+	})
+
 	delprojerr := client.DeleteProject(org, project)
 	if delprojerr != nil {
 		t.Fatal(delprojerr)
