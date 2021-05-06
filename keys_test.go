@@ -28,6 +28,9 @@ func TestKeysResource(t *testing.T) {
 		if key.Label != "Test client key" {
 			t.Error("Key does not have correct label")
 		}
+		if key.RateLimit != nil {
+			t.Error("freshly created keys should not have rate limiting")
+		}
 		t.Run("List client keys", func(t *testing.T) {
 			keys, err := client.GetClientKeys(org, project)
 			if err != nil {
@@ -35,6 +38,18 @@ func TestKeysResource(t *testing.T) {
 			}
 			if len(keys) != 2 {
 				t.Errorf("Expected 2 keys, got %d", len(keys))
+			}
+		})
+		t.Run("Update rate limit for client key", func(t *testing.T) {
+			resKey, err := client.SetClientKeyRateLimit(org, project, key, 1000, 60)
+			if err != nil {
+				t.Error(err)
+			}
+			if resKey.RateLimit == nil {
+				t.Error("missing rate limit in updated key")
+			}
+			if resKey.RateLimit.Count != 1000 || resKey.RateLimit.Window != 60 {
+				t.Error("failed to apply rate limit for key")
 			}
 		})
 		t.Run("Update name of client key", func(t *testing.T) {
