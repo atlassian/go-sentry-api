@@ -8,8 +8,11 @@ const testEmail = "default@email.com"
 
 func createMemberHelper(t *testing.T, org Organization) (Member, func() error) {
 	client := newTestClient(t)
-
-	member, err := client.CreateMember(org, testEmail)
+	teams := make([]string, len(*org.Teams))
+	for i, team := range *org.Teams {
+		teams[i] = *team.Slug
+	}
+	member, err := client.CreateMember(org, testEmail, teams)
 	if err != nil {
 		t.Fatal(err)
 	}

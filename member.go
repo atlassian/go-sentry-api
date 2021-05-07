@@ -30,14 +30,14 @@ func (o *memberQuery) ToQueryString() string {
 }
 
 // CreateMember takes an email and creates a new member
-func (c *Client) CreateMember(o Organization, email string) (Member, error) {
+func (c *Client) CreateMember(o Organization, email string, teams []string) (Member, error) {
 	var member Member
 	memberRole := "member"
 	memberreq := Member{
 		Email: email,
 		Role:  memberRole,
+		Teams: teams,
 	}
-
 	err := c.do("POST", fmt.Sprintf("organizations/%s/members", *o.Slug), &member, &memberreq)
 	return member, err
 }
