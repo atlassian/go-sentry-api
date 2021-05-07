@@ -7,17 +7,22 @@ import (
 
 // Release is your release for a orgs teams project
 type Release struct {
-	DateCreated  *time.Time `json:"dateCreated,omitempty"`
-	DateReleased *time.Time `json:"dateReleased,omitempty"`
-	DateStarted  *time.Time `json:"dateStarted,omitempty"`
-	FirstEvent   *time.Time `json:"firstEvent,omitempty"`
-	LastEvent    *time.Time `json:"lastEvent,omitempty"`
-	NewGroups    *int       `json:"newGroups,omitempty"`
-	Owner        *string    `json:"owner,omitempty"`
-	Ref          *string    `json:"ref,omitempty"`
-	ShortVersion string     `json:"shortVersion"`
-	URL          *string    `json:"url,omitempty"`
-	Version      string     `json:"version"`
+	DateCreated  *time.Time              `json:"dateCreated,omitempty"`
+	DateReleased *time.Time              `json:"dateReleased,omitempty"`
+	FirstEvent   *time.Time              `json:"firstEvent,omitempty"`
+	LastEvent    *time.Time              `json:"lastEvent,omitempty"`
+	NewGroups    *int                    `json:"newGroups,omitempty"`
+	Projects     []Project               `json:"projects,omitempty"`
+	Ref          *string                 `json:"ref,omitempty"`
+	ShortVersion string                  `json:"shortVersion"`
+	URL          *string                 `json:"url,omitempty"`
+	Version      string                  `json:"version"`
+	Authors      *[]Author               `json:"authors,omitempty"`
+	CommitCount  *int                    `json:"commitCount,omitempty"`
+	LastCommit   *Commit                 `json:"lastCommit,omitempty"`
+	Data         *map[string]interface{} `json:"data,omitempty"`
+	DeployCount  *int                    `json:"deployCount,omitempty"`
+	LastDeploy   *Deploy                 `json:"lastDeploy,omitempty"`
 }
 
 // NewRelease is used to create a new release
