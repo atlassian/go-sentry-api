@@ -69,6 +69,6 @@ func (c *Client) GetClientKeys(o Organization, p Project) ([]Key, error) {
 func (c *Client) SetClientKeyRateLimit(o Organization, p Project, k Key, count, window int) (Key, error) {
 	var key Key
 	req := &Key{RateLimit: &KeyRateLimit{Count: count, Window: window}}
-	err := c.do("PUT", fmt.Sprintf("project/%s/%s/keys/%s", *o.Slug, *p.Slug, k.ID), &key, &req)
+	err := c.do("PUT", fmt.Sprintf("projects/%s/%s/keys/%s", *o.Slug, *p.Slug, k.ID), &key, &req)
 	return key, err
 }
