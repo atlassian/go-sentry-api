@@ -200,3 +200,18 @@ func (c *Client) UpdateIssue(i Issue) error {
 func (c *Client) DeleteIssue(i Issue) error {
 	return c.do("DELETE", fmt.Sprintf("issues/%s", *i.ID), nil, nil)
 }
+
+// ResolvedShortId is used to capture an issue, organization, and project
+type ResolvedShortId struct {
+	ShortId 			string			`json:"shortId,omitempty"`
+	Group				*Issue			`json:"group,omitempty"`
+	GroupID         	string         	`json:"groupID,omitempty"`
+	OrganizationSlug 	string         	`json:"organizationSlug,omitempty"`
+	ProjectSlug			string         	`json:"projectSlug,omitempty"`
+}
+
+func (c *Client) ResolveShortId(o Organization, shortId string) (ResolvedShortId, error){
+	var issue ResolvedShortId
+	err := c.do("GET", fmt.Sprintf("organizations/%s/shortids/%s/", *o.Slug, shortId), &issue, nil)
+	return issue, err
+}

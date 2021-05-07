@@ -42,6 +42,13 @@ func (c *Client) CreateMember(o Organization, email string) (Member, error) {
 	return member, err
 }
 
+// ListUsers returns the members in an organization
+func (c *Client) ListUsers(o Organization) ([]Member, *Link, error) {
+	var members []Member
+	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/users", *o.Slug), &members, nil)
+	return members, link, err
+}
+
 // GetMemberByEmail takes a user email and returns back the user
 func (c *Client) GetMemberByEmail(o Organization, memberEmail string) (Member, error) {
 	var members []Member
