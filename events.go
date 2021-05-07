@@ -102,11 +102,11 @@ func (c *Client) GetOldestEvent(i Issue) (Event, error) {
 
 // ResolvedEvent is used to capture an event, its group, organization, and project
 type ResolvedEvent struct {
-	Event				*Event			json:`"event,omitempty"`
-	EventId 			string			json:`"eventId,omitempty"`
-	GroupID         	string         	json:`"groupID,omitempty"`
-	OrganizationSlug 	string         	json:`"organizationSlug,omitempty"`
-	ProjectSlug			string         	json:`"projectSlug,omitempty"`
+	Event            *Event `json:"event,omitempty"`
+	EventId          string `json:"eventId,omitempty"`
+	GroupID          string `json:"groupID,omitempty"`
+	OrganizationSlug string `json:"organizationSlug,omitempty"`
+	ProjectSlug      string `json:"projectSlug,omitempty"`
 }
 
 // ResolveEventId resolves an event ID to the project slug and internal issue ID and internal event ID.

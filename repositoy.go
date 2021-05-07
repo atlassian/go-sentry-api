@@ -9,6 +9,7 @@ type Author struct {
 	Name  *string `json:"name,omitempty"`
 	Email *string `json:"name,omitempty"`
 }
+
 type Repository struct {
 	DateCreated *time.Time `json:"dateCreated,omitempty"`
 	ID          string     `json:"id,omitempty"`
@@ -18,7 +19,9 @@ type Repository struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"provider,omitempty"`
-	URL *string `json:"url,omitempty"`
+	URL           *string `json:"url,omitempty"`
+	IntegrationId *string `json:"integrationId,omitempty"`
+	ExternalSlug  *string `json:"externalSlug,omitempty"`
 }
 
 type Commit struct {
