@@ -66,6 +66,16 @@ func (c *Client) GetProject(o Organization, projslug string) (Project, error) {
 	return proj, err
 }
 
+// RemoveProjectTeam takes a team slug and removes that team from the project
+func (c *Client) RemoveProjectTeam(o Organization, p Project, teamSlug string) error {
+	return c.do("DELETE", fmt.Sprintf("projects/%s/%s/teams/%s/", *o.Slug, *p.Slug, teamSlug), &p, &p)
+}
+
+// AddProjectTeam takes a team slug and adds that team to the project
+func (c *Client) AddProjectTeam(o Organization, p Project, teamSlug string) error {
+	return c.do("POST", fmt.Sprintf("projects/%s/%s/teams/%s/", *o.Slug, *p.Slug, teamSlug), &p, &p)
+}
+
 // UpdateProject takes a organization and project then updates it on the server side
 func (c *Client) UpdateProject(o Organization, p Project) error {
 	return c.do("PUT", fmt.Sprintf("projects/%s/%s", *o.Slug, *p.Slug), &p, &p)
