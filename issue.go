@@ -96,7 +96,7 @@ type Issue struct {
 	LastSeen            *time.Time              `json:"lastSeen,omitempty"`
 	Level               *string                 `json:"level,omitempty"`
 	Logger              *string                 `json:"logger,omitempty"`
-	Metadata            *map[string]string      `json:"metadata,omitempty"`
+	Metadata            *map[string]interface{} `json:"metadata,omitempty"`
 	NumComments         *int                    `json:"numComments,omitempty"`
 	Permalink           *string                 `json:"permalink,omitempty"`
 	Project             *Project                `json:"project,omitempty"`
