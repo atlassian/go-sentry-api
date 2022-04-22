@@ -29,7 +29,7 @@ func TestUserFeedbackResource(t *testing.T) {
 
 		issue := issues[0]
 
-		events, _, _ := client.GetIssueEvents(issue)
+		events, _, _ := client.GetIssueEvents(issue, nil)
 		if len(events) == 0 {
 			t.Fatal("no events found")
 		}

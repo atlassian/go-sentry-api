@@ -113,7 +113,18 @@ func TestIssueResource(t *testing.T) {
 		})
 
 		t.Run("Get events for this issue", func(t *testing.T) {
-			events, _, err := client.GetIssueEvents(issues[0])
+			events, _, err := client.GetIssueEvents(issues[0], nil)
+			if err != nil {
+				t.Error(err)
+			}
+			if len(events) == 0 {
+				t.Errorf("Should be at least more than 1 event %v", events)
+			}
+		})
+
+		t.Run("Get events for this issue with all details", func(t *testing.T) {
+			full := true
+			events, _, err := client.GetIssueEvents(issues[0], &full)
 			if err != nil {
 				t.Error(err)
 			}
