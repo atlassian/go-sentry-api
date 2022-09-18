@@ -5,12 +5,26 @@ import (
 	"time"
 )
 
-// Asset is used from a plugin. Things like js/html
+// Asset is used from a testPlugin. Things like js/html
 type Asset struct {
 	URL string `json:"url,omitempty"`
 }
 
-// Plugin is a type of project plugin
+// PluginConfigItem describes testPlugin option
+type PluginConfigItem struct {
+	ReadOnly     bool          `json:"readonly,omitempty"`
+	Choices      []interface{} `json:"choices,omitempty"`
+	Placeholder  string        `json:"placeholder,omitempty"`
+	Name         string        `json:"name,omitempty"`
+	Help         string        `json:"help,omitempty"`
+	DefaultValue interface{}   `json:"defaultValue,omitempty"`
+	Required     bool          `json:"required,omitempty"`
+	Type         string        `json:"type,omitempty"`
+	Value        interface{}   `json:"value,omitempty"`
+	Label        string        `json:"label,omitempty"`
+}
+
+// Plugin is a type of project testPlugin
 type Plugin struct {
 	Assets     []Asset                `json:"assets,omitempty"`
 	IsTestable bool                   `json:"isTestable,omitempty"`
@@ -20,6 +34,7 @@ type Plugin struct {
 	Type       string                 `json:"type,omitempty"`
 	ID         string                 `json:"id,omitempty"`
 	Metadata   map[string]interface{} `json:"metadata,omitempty"`
+	Config     []PluginConfigItem     `json:"config,omitempty"`
 }
 
 // Project is your project in sentry
