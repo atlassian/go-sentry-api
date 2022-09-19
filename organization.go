@@ -2,12 +2,14 @@ package sentry
 
 import (
 	"fmt"
+	"path"
 	"time"
 )
 
 const (
-	// OrgEndpointName is set to roganizations
-	OrgEndpointName = "organizations"
+	MembersEndpointName = "members"
+	OrgEndpointName     = "organizations"
+	UsersEndpointName   = "users"
 )
 
 // Quota is your quote for a project limit and max rate
@@ -37,11 +39,25 @@ func (c *Client) GetOrganization(orgslug string) (Organization, error) {
 	return org, err
 }
 
+// GetOrganizationMember returns the member associated with orgslug and memberID
+func (c *Client) GetOrganizationMember(orgslug string, memberID string) (Member, error) {
+	var member Member
+	err := c.do("GET", path.Join(OrgEndpointName, orgslug, MembersEndpointName, memberID), &member, nil)
+	return member, err
+}
+
 // GetOrganizations will return back every organization in the sentry instance
 func (c *Client) GetOrganizations() ([]Organization, *Link, error) {
 	orgs := make([]Organization, 0)
 	link, err := c.doWithPagination("GET", OrgEndpointName, &orgs, nil)
 	return orgs, link, err
+}
+
+// ListOrganizationUsers returns users in the organization identified by orgslug
+func (c *Client) ListOrganizationUsers(orgslug string) ([]User, error) {
+	users := make([]User, 0)
+	err := c.do("GET", path.Join(OrgEndpointName, orgslug, UsersEndpointName), &users, nil)
+	return users, err
 }
 
 // CreateOrganization creates a organization with a name

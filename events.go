@@ -16,9 +16,11 @@ type Tag struct {
 
 //User is the user that was affected
 type User struct {
-	Username *string `json:"username,omitempty"`
-	Email    *string `json:"email,omitempty"`
-	ID       *string `json:"id,omitempty"`
+	Username *string  `json:"username,omitempty"`
+	Email    *string  `json:"email,omitempty"`
+	ID       *string  `json:"id,omitempty"`
+	Name     *string  `json:"name,omitempty"`
+	Projects []string `json:"projects,omitempty"`
 }
 
 // Entry is the entry for the message/stacktrace/etc...
