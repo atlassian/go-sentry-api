@@ -20,6 +20,8 @@ type User struct {
 	Email    *string  `json:"email,omitempty"`
 	ID       *string  `json:"id,omitempty"`
 	Name     *string  `json:"name,omitempty"`
+	Role     *string  `json:"role,omitempty"`
+	RoleName *string  `json:"roleName,omitempty"`
 	Projects []string `json:"projects,omitempty"`
 }
 
