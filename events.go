@@ -69,7 +69,7 @@ type Event struct {
 	Size            *int                    `json:"size,omitempty"`
 	Platform        *string                 `json:"platform,omitempty"`
 	Type            *string                 `json:"type,omitempty"`
-	Metadata        *map[string]string      `json:"metadata,omitempty"`
+	Metadata        *map[string]interface{} `json:"metadata,omitempty"`
 	Tags            *[]Tag                  `json:"tags,omitempty"`
 	DateCreated     *time.Time              `json:"dateCreated,omitempty"`
 	DateReceived    *time.Time              `json:"dateReceived,omitempty"`

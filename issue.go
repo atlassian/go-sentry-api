@@ -134,6 +134,19 @@ func (i *issueQuery) ToQueryString() string {
 	return query.Encode()
 }
 
+type issueEventQuery struct {
+	Full *bool
+}
+
+func (e *issueEventQuery) ToQueryString() string {
+	query := url.Values{}
+	if e.Full != nil {
+		query.Add("full", strconv.FormatBool(*e.Full))
+	}
+
+	return query.Encode()
+}
+
 //GetIssues will fetch all issues for organization and project
 func (c *Client) GetIssues(o Organization, p Project, StatsPeriod *string, ShortIDLookup *bool, query *string) ([]Issue, *Link, error) {
 	var issues []Issue
@@ -185,9 +198,15 @@ func (c *Client) GetIssueTagValues(i Issue, tag IssueTag) ([]IssueTagValue, *Lin
 }
 
 //GetIssueEvents will fetch all events for a issue
-func (c *Client) GetIssueEvents(i Issue) ([]Event, *Link, error) {
+func (c *Client) GetIssueEvents(i Issue, full *bool) ([]Event, *Link, error) {
 	var events []Event
-	link, err := c.doWithPagination("GET", fmt.Sprintf("issues/%s/events", *i.ID), &events, nil)
+
+	issueEventFilter := &issueEventQuery{
+		Full: full,
+	}
+
+	link, err := c.doWithPaginationQuery(
+		"GET", fmt.Sprintf("issues/%s/events", *i.ID), &events, nil, issueEventFilter)
 	return events, link, err
 }
 
