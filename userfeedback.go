@@ -26,12 +26,12 @@ func NewUserFeedback(name, comments, email, eventID string) UserFeedback {
 	}
 }
 
-//SubmitUserFeedback is used when you want to submit feedback to a organizations project
+// SubmitUserFeedback is used when you want to submit feedback to a organizations project
 func (c *Client) SubmitUserFeedback(o Organization, p Project, u *UserFeedback) error {
 	return c.do("POST", fmt.Sprintf("projects/%s/%s/user-feedback", *o.Slug, *p.Slug), &u, &u)
 }
 
-//GetProjectUserFeedback is used to fetch all feedback given for a certain project
+// GetProjectUserFeedback is used to fetch all feedback given for a certain project
 func (c *Client) GetProjectUserFeedback(o Organization, p Project) ([]UserFeedback, *Link, error) {
 	var feedback []UserFeedback
 	link, err := c.doWithPagination("GET", fmt.Sprintf("projects/%s/%s/user-feedback", *o.Slug, *p.Slug), &feedback, nil)

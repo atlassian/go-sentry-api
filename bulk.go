@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-//IssueBulkRequest is what should be used when bulk mutate issue
+// IssueBulkRequest is what should be used when bulk mutate issue
 type IssueBulkRequest struct {
 	Status         *Status `json:"status,omitempty"`
 	IgnoreDuration *int    `json:"ignoreDuration,omitempty"`
@@ -15,14 +15,14 @@ type IssueBulkRequest struct {
 	IsBookmarked   *bool   `json:"isBookmarked,omitempty"`
 }
 
-//IssueBulkResponse is what is returned when your mutation is done
+// IssueBulkResponse is what is returned when your mutation is done
 type IssueBulkResponse struct {
 	Status        *Status            `json:"status,omitempty"`
 	IsPublic      *bool              `json:"isPublic,omitempty"`
 	StatusDetails *map[string]string `json:"statusDetails,omitempty"`
 }
 
-//issueMutateArgs
+// issueMutateArgs
 type issueMutateArgs struct {
 	ID     *[]string
 	Status *Status
@@ -41,7 +41,7 @@ func (i *issueMutateArgs) ToQueryString() string {
 	return query.Encode()
 }
 
-//BulkMutateIssues takes a list of ids and optional status to filter through
+// BulkMutateIssues takes a list of ids and optional status to filter through
 func (c *Client) BulkMutateIssues(o Organization, p Project, req IssueBulkRequest, issues *[]string, status *Status) (IssueBulkResponse, error) {
 	var issueBulkResponse IssueBulkResponse
 
@@ -56,7 +56,7 @@ func (c *Client) BulkMutateIssues(o Organization, p Project, req IssueBulkReques
 	return issueBulkResponse, err
 }
 
-//BulkDeleteIssues takes a list of IDs and will delete them
+// BulkDeleteIssues takes a list of IDs and will delete them
 func (c *Client) BulkDeleteIssues(o Organization, p Project, issues []string) error {
 	mutateQuery := &issueMutateArgs{
 		ID: &issues,

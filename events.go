@@ -14,7 +14,7 @@ type Tag struct {
 	Key   *string `json:"key,omitempty"`
 }
 
-//User is the user that was affected
+// User is the user that was affected
 type User struct {
 	Username *string  `json:"username,omitempty"`
 	Email    *string  `json:"email,omitempty"`
@@ -31,7 +31,7 @@ type Entry struct {
 	Data json.RawMessage `json:"data,omitempty"`
 }
 
-//GetInterface will convert the entry into a go interface
+// GetInterface will convert the entry into a go interface
 func (e *Entry) GetInterface() (string, interface{}, error) {
 	var destination interface{}
 
@@ -90,14 +90,14 @@ func (c *Client) GetProjectEvent(o Organization, p Project, eventID string) (Eve
 	return event, err
 }
 
-//GetLatestEvent will fetch the latest event for a issue
+// GetLatestEvent will fetch the latest event for a issue
 func (c *Client) GetLatestEvent(i Issue) (Event, error) {
 	var event Event
 	err := c.do("GET", fmt.Sprintf("issues/%s/events/latest", *i.ID), &event, nil)
 	return event, err
 }
 
-//GetOldestEvent will fetch the latest event for a issue
+// GetOldestEvent will fetch the latest event for a issue
 func (c *Client) GetOldestEvent(i Issue) (Event, error) {
 	var event Event
 	err := c.do("GET", fmt.Sprintf("issues/%s/events/oldest", *i.ID), &event, nil)
