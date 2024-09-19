@@ -52,20 +52,20 @@ func (c *Client) GetReleases(o Organization, p Project) ([]Release, *Link, error
 	return rel, link, err
 }
 
-//CreateRelease will create a new release for a project in a org
+// CreateRelease will create a new release for a project in a org
 func (c *Client) CreateRelease(o Organization, p Project, r NewRelease) (Release, error) {
 	var rel Release
 	err := c.do("POST", fmt.Sprintf("projects/%s/%s/releases", *o.Slug, *p.Slug), &rel, &r)
 	return rel, err
 }
 
-//UpdateRelease will update ref, url, started, released for a release.
-//Version should not change.
+// UpdateRelease will update ref, url, started, released for a release.
+// Version should not change.
 func (c *Client) UpdateRelease(o Organization, p Project, r Release) error {
 	return c.do("PUT", fmt.Sprintf("projects/%s/%s/releases/%s", *o.Slug, *p.Slug, r.Version), &r, &r)
 }
 
-//DeleteRelease will delete the release from your project
+// DeleteRelease will delete the release from your project
 func (c *Client) DeleteRelease(o Organization, p Project, r Release) error {
 	return c.do("DELETE", fmt.Sprintf("projects/%s/%s/releases/%s", *o.Slug, *p.Slug, r.Version), nil, nil)
 }

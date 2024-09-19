@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-//File is used to create a new file for a release
+// File is used to create a new file for a release
 type File struct {
 	SHA1        string            `json:"sha1,omitempty"`
 	Name        string            `json:"name,omitempty"`
@@ -20,7 +20,7 @@ type File struct {
 	Size        int               `json:"size,omitempty"`
 }
 
-//UploadReleaseFile will upload a file to release
+// UploadReleaseFile will upload a file to release
 func (c *Client) UploadReleaseFile(o Organization, p Project, r Release,
 	name string, buffer io.Reader, header string) (File, error) {
 	var file File
@@ -69,19 +69,19 @@ func (c *Client) DeleteReleaseFile(o Organization, p Project, r Release, f File)
 		nil, nil)
 }
 
-//UpdateReleaseFile will update just the name of the release file
+// UpdateReleaseFile will update just the name of the release file
 func (c *Client) UpdateReleaseFile(o Organization, p Project, r Release, f File) error {
 	return c.do("PUT", fmt.Sprintf("projects/%s/%s/releases/%s/files/%s", *o.Slug, *p.Slug, r.Version, f.ID), &f, &f)
 }
 
-//GetReleaseFiles will fetch all files in a release
+// GetReleaseFiles will fetch all files in a release
 func (c *Client) GetReleaseFiles(o Organization, p Project, r Release) ([]File, error) {
 	var files []File
 	err := c.do("GET", fmt.Sprintf("projects/%s/%s/releases/%s/files", *o.Slug, *p.Slug, r.Version), &files, nil)
 	return files, err
 }
 
-//GetReleaseFile will get the release file
+// GetReleaseFile will get the release file
 func (c *Client) GetReleaseFile(o Organization, p Project, r Release, id string) (File, error) {
 	var file File
 	err := c.do("GET", fmt.Sprintf("projects/%s/%s/releases/%s/files/%s", *o.Slug, *p.Slug, r.Version, id), &file, nil)

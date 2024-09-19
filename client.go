@@ -199,7 +199,7 @@ func (c *Client) doWithPagination(method, endpoint string, out, in interface{}) 
 	return c.sendGetLink(request, out)
 }
 
-//rawWithPagination is used when we need to get a raw URL vs a url we combine and comb with newrequest
+// rawWithPagination is used when we need to get a raw URL vs a url we combine and comb with newrequest
 func (c *Client) rawWithPagination(method, endpoint string, out, in interface{}) (*Link, error) {
 	request, err := c.rawRequest(method, endpoint, in)
 	if err != nil {

@@ -33,7 +33,7 @@ type nameReq struct {
 	Name string `json:"name"`
 }
 
-//CreateClientKey creates a new client key for a project and org
+// CreateClientKey creates a new client key for a project and org
 func (c *Client) CreateClientKey(o Organization, p Project, name string) (Key, error) {
 	var key Key
 	req := &nameReq{
@@ -43,12 +43,12 @@ func (c *Client) CreateClientKey(o Organization, p Project, name string) (Key, e
 	return key, err
 }
 
-//DeleteClientKey deletes a client key for a project and org
+// DeleteClientKey deletes a client key for a project and org
 func (c *Client) DeleteClientKey(o Organization, p Project, k Key) error {
 	return c.do("DELETE", fmt.Sprintf("projects/%s/%s/keys/%s", *o.Slug, *p.Slug, k.ID), nil, nil)
 }
 
-//UpdateClientKey updates the name only of a key
+// UpdateClientKey updates the name only of a key
 func (c *Client) UpdateClientKey(o Organization, p Project, k Key, name string) (Key, error) {
 	var key Key
 	req := &nameReq{
@@ -58,7 +58,7 @@ func (c *Client) UpdateClientKey(o Organization, p Project, k Key, name string) 
 	return key, err
 }
 
-//GetClientKeys fetches all client keys of the given project
+// GetClientKeys fetches all client keys of the given project
 func (c *Client) GetClientKeys(o Organization, p Project) ([]Key, error) {
 	var keys []Key
 	err := c.do("GET", fmt.Sprintf("projects/%s/%s/keys", *o.Slug, *p.Slug), &keys, nil)
