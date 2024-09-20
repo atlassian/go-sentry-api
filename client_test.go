@@ -5,6 +5,9 @@ import (
 	"math/rand"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func getDefaultOrg() string {
@@ -18,21 +21,17 @@ func getDefaultOrg() string {
 }
 
 func newTestClient(t *testing.T) *Client {
-	authtoken := os.Getenv("SENTRY_AUTH_TOKEN")
 	endpoint := os.Getenv("SENTRY_ENDPOINT")
-
-	if authtoken == "" {
-		t.Fatal("Need a authtoken to continue. Please set SENTRY_AUTH_TOKEN")
-	}
-
 	if endpoint == "" {
 		endpoint = "https://sentry.io/api/0/"
 	}
 
+	authtoken := os.Getenv("SENTRY_AUTH_TOKEN")
+	require.NotEmpty(t, authtoken, "Need SENTRY_AUTH_TOKEN env var to continue")
+
 	client, clienterr := NewClient(authtoken, &endpoint, nil)
-	if clienterr != nil {
-		t.Fatal(clienterr)
-	}
+	require.NoError(t, clienterr)
+	require.NotNil(t, client)
 
 	return client
 }
@@ -48,9 +47,7 @@ func TestClientBadEndpoint(t *testing.T) {
 	authtoken := os.Getenv("SENTRY_AUTH_TOKEN")
 
 	_, berr := NewClient(authtoken, &badendpoint, nil)
-	if berr == nil {
-		t.Error("Should have gotten an error for an empty endpoint")
-	}
+	assert.Error(t, berr)
 }
 
 func TestClientKnownGoodEndpoint(t *testing.T) {
@@ -58,8 +55,8 @@ func TestClientKnownGoodEndpoint(t *testing.T) {
 	if berr != nil {
 		t.Error(berr)
 	}
-	if bclient.Endpoint != "https://sentry.io/api/0/" {
-		t.Errorf("Endpoint is not https://sentry.io/api/0 got %s", bclient.Endpoint)
+	if bclient.endPoint != "https://sentry.io/api/0/" {
+		t.Errorf("Endpoint is not https://sentry.io/api/0 got %s", bclient.endPoint)
 	}
 }
 
