@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -21,8 +20,13 @@ type File struct {
 }
 
 // UploadReleaseFile will upload a file to release
-func (c *Client) UploadReleaseFile(o Organization, p Project, r Release,
-	name string, buffer io.Reader, header string) (File, error) {
+func (c *Client) UploadReleaseFile(o Organization,
+	p Project,
+	r Release,
+	name string,
+	buffer io.Reader,
+	header string,
+) (File, error) {
 	var file File
 
 	body := &bytes.Buffer{}
@@ -36,7 +40,7 @@ func (c *Client) UploadReleaseFile(o Organization, p Project, r Release,
 		return file, createerr
 	}
 
-	data, readerr := ioutil.ReadAll(buffer)
+	data, readerr := io.ReadAll(buffer)
 	if readerr != nil {
 		return file, readerr
 	}
@@ -47,11 +51,11 @@ func (c *Client) UploadReleaseFile(o Organization, p Project, r Release,
 		return file, closeerr
 	}
 
-	endpoint := fmt.Sprintf("%sprojects/%s/%s/releases/%s/files/", c.Endpoint, *o.Slug, *p.Slug, r.Version)
+	endpoint := fmt.Sprintf("%sprojects/%s/%s/releases/%s/files/", c.endPoint, *o.Slug, *p.Slug, r.Version)
 
 	req, err := http.NewRequest("POST", endpoint, body)
 
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.authToken))
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	req.Close = true
 
