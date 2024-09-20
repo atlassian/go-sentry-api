@@ -25,13 +25,49 @@ const (
 // Needs a auth token.
 // If no endpoint this defaults to https://sentry.io/api/0/
 type Client struct {
-	AuthToken  string
-	Endpoint   string
-	HTTPClient *http.Client
+	authToken  string
+	endPoint   string
+	httpClient *http.Client
+}
+
+type Option func(*Client)
+
+func WithHTTPClient(h *http.Client) Option {
+	return func(c *Client) {
+		c.httpClient = h
+	}
+}
+
+func WithEndpoint(endpoint string) Option {
+	return func(c *Client) {
+		c.endPoint = endpoint
+	}
+}
+
+func New(authToken string, opts ...Option) (*Client, error) {
+	if strings.TrimSpace(authToken) == "" {
+		return nil, fmt.Errorf("sentry-client: auth token specified is blank")
+	}
+
+	c := &Client{
+		authToken:  authToken,
+		endPoint:   fmt.Sprintf("%s%s", DefaultHost, DefaultEndpoint),
+		httpClient: &http.Client{},
+	}
+
+	for _, opt := range opts {
+		opt(c)
+	}
+
+	return c, nil
 }
 
 // NewClient takes a auth token a optional endpoint and optional timeout and
 // will return back a client and error
+//
+// Deprecated: NewClient should not be used and you should move to the
+// New method which uses the variadic options pattern and allows for better
+// flexability and defaults
 func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error) {
 	var (
 		clientEndpoint string
@@ -54,9 +90,9 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 	}
 
 	return &Client{
-		AuthToken: authtoken,
-		Endpoint:  clientEndpoint,
-		HTTPClient: &http.Client{
+		authToken: authtoken,
+		endPoint:  clientEndpoint,
+		httpClient: &http.Client{
 			Timeout: clientTimeout,
 		},
 	}, nil
@@ -121,7 +157,7 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 		bodyreader = newbodyreader
 	}
 
-	finalEndpoint := c.Endpoint + endpoint
+	finalEndpoint := c.endPoint + endpoint
 	if !strings.HasSuffix(endpoint, "/") {
 		finalEndpoint = finalEndpoint + "/"
 	}
@@ -131,7 +167,7 @@ func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Requ
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.authToken))
 	req.Header.Add("Accept", "application/json")
 	req.Close = true
 
@@ -149,17 +185,16 @@ func (c *Client) rawRequest(method, endpoint string, in interface{}) (*http.Requ
 		bodyreader = newbodyreader
 	}
 
-	req, err := http.NewRequest(method, c.Endpoint+endpoint, bodyreader)
+	req, err := http.NewRequest(method, c.endPoint+endpoint, bodyreader)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.AuthToken))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.authToken))
 	req.Close = true
 
 	return req, nil
-
 }
 
 func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in interface{}, query QueryArgs) error {
@@ -215,7 +250,7 @@ func (c *Client) fetchLink(r *http.Response) *Link {
 }
 
 func (c *Client) sendGetLink(req *http.Request, out interface{}) (*Link, error) {
-	response, err := c.HTTPClient.Do(req)
+	response, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +261,7 @@ func (c *Client) sendGetLink(req *http.Request, out interface{}) (*Link, error) 
 }
 
 func (c *Client) send(req *http.Request, out interface{}) error {
-	response, err := c.HTTPClient.Do(req)
+	response, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
