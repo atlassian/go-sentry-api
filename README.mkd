@@ -1,13 +1,12 @@
 # Go Sentry API
 [![Go Reference](https://pkg.go.dev/badge/github.com/atlassian/go-sentry-api.svg)](https://pkg.go.dev/github.com/atlassian/go-sentry-api)
 
-
 This is a library that implements a client in go for the [sentry api](http://www.sentry.io/api/). It supports all the endpoints and can do a good bit. For a full reference you can check the godoc link above.
 
 ## Usage
 
 ### Initialization and Create New DSN Key
-```go
+```
 import (
 	"fmt"
 
@@ -36,6 +35,7 @@ if err != nil {
 fmt.Printf(key.DSN.Secret)
 
 ```
+
 ## Installation
 ```
 go get github.com/atlassian/go-sentry-api
@@ -44,10 +44,8 @@ go get github.com/atlassian/go-sentry-api
 [![Go Reference](https://pkg.go.dev/badge/github.com/atlassian/go-sentry-api.svg)](https://pkg.go.dev/github.com/atlassian/go-sentry-api)
 
 ## Tests
-To run tests you can setup a local sentry instance via docker. There is a
-makefile command called `make devenv` which will setup all of the containers.
 
-Once complete you can then setup a environment var of `SENTRY_AUTHTOKEN` and then run `make test` which should go through and create and run all tests aginst localhost:8080
+Run `make test` to execute
 
 ## Contributors
 Pull requests, issues and comments welcome. For pull requests:
