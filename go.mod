@@ -18,5 +18,5 @@ replace (
 	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/gorilla/websocket => github.com/gorilla/websocket v1.4.2
 	github.com/labstack/echo/v4 => github.com/labstack/echo/v4 v4.2.0
-	golang.org/x/text => golang.org/x/text v0.3.5
+	golang.org/x/text => golang.org/x/text v0.18.0
 )
