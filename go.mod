@@ -17,7 +17,7 @@ replace (
 	// add these libraries as direct dependencies, but to stop `go mod tidy`
 	// removing them we would need to import them somewhere in the code.
 	// See: https://github.com/golang/go/issues/37352
-	github.com/coreos/etcd => github.com/coreos/etcd v3.3.25+incompatible
+	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/gorilla/websocket => github.com/gorilla/websocket v1.4.2
 	github.com/labstack/echo/v4 => github.com/labstack/echo/v4 v4.2.0
 	golang.org/x/text => golang.org/x/text v0.3.5
