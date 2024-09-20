@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -64,13 +63,12 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 }
 
 func (c *Client) hasError(response *http.Response) error {
-
 	if response.StatusCode > 299 || response.StatusCode < 200 {
 		apierror := APIError{
 			StatusCode: response.StatusCode,
 		}
 
-		body, err := ioutil.ReadAll(response.Body)
+		body, err := io.ReadAll(response.Body)
 		if err != nil {
 			return err
 		}
@@ -85,7 +83,6 @@ func (c *Client) hasError(response *http.Response) error {
 }
 
 func (c *Client) decodeOrError(response *http.Response, out interface{}) error {
-
 	if err := c.hasError(response); err != nil {
 		return err
 	}
@@ -93,7 +90,7 @@ func (c *Client) decodeOrError(response *http.Response, out interface{}) error {
 	defer response.Body.Close()
 
 	if out != nil {
-		body, err := ioutil.ReadAll(response.Body)
+		body, err := io.ReadAll(response.Body)
 		if err != nil {
 			return err
 		}
@@ -114,7 +111,6 @@ func (c *Client) encodeOrError(in interface{}) (io.Reader, error) {
 }
 
 func (c *Client) newRequest(method, endpoint string, in interface{}) (*http.Request, error) {
-
 	var bodyreader io.Reader
 
 	if in != nil {
@@ -174,6 +170,7 @@ func (c *Client) doWithQuery(method string, endpoint string, out interface{}, in
 	request.URL.RawQuery = query.ToQueryString()
 	return c.send(request, out)
 }
+
 func (c *Client) doWithPaginationQuery(method, endpoint string, out, in interface{}, query QueryArgs) (*Link, error) {
 	request, err := c.newRequest(method, endpoint, in)
 	if err != nil {
