@@ -14,10 +14,11 @@ type DSN struct {
 
 // Key is a DSN that sentry has made
 type Key struct {
+	ID          string        `json:"id,omitempty"`
 	Label       string        `json:"label,omitempty"`
+	Name        string        `json:"name,omitempty"`
 	DSN         DSN           `json:"dsn,omitempty"`
 	Secret      string        `json:"secret,omitempty"`
-	ID          string        `json:"id,omitempty"`
 	DateCreated time.Time     `json:"dateCreated,omitempty"`
 	Public      string        `json:"public,omitempty"`
 	RateLimit   *KeyRateLimit `json:"rateLimit,omitempty"`
@@ -55,6 +56,13 @@ func (c *Client) UpdateClientKey(o Organization, p Project, k Key, name string) 
 		Name: name,
 	}
 	err := c.do("PUT", fmt.Sprintf("projects/%s/%s/keys/%s", *o.Slug, *p.Slug, k.ID), &key, &req)
+	return key, err
+}
+
+// GetClientKey fetches a client key of the given project, org and key ID
+func (c *Client) GetClientKey(o Organization, p Project, keyId string) (Key, error) {
+	var key Key
+	err := c.do("GET", fmt.Sprintf("projects/%s/%s/keys/%s", *o.Slug, *p.Slug, keyId), &key, nil)
 	return key, err
 }
 

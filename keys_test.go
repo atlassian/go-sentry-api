@@ -4,6 +4,10 @@ import (
 	"testing"
 )
 
+const (
+	testClientKeyName = "Test client key"
+)
+
 func TestKeysResource(t *testing.T) {
 	t.Parallel()
 
@@ -21,12 +25,15 @@ func TestKeysResource(t *testing.T) {
 	defer cleanupproj()
 
 	t.Run("Create a new key for project", func(t *testing.T) {
-		key, err := client.CreateClientKey(org, project, "Test client key")
+		key, err := client.CreateClientKey(org, project, testClientKeyName)
 		if err != nil {
 			t.Error(err)
 		}
-		if key.Label != "Test client key" {
+		if key.Label != testClientKeyName {
 			t.Error("Key does not have correct label")
+		}
+		if key.Label != testClientKeyName {
+			t.Error("Key does not have correct name")
 		}
 		if key.RateLimit != nil {
 			t.Error("freshly created keys should not have rate limiting")
@@ -69,6 +76,20 @@ func TestKeysResource(t *testing.T) {
 					t.Error(err)
 				}
 			})
+		})
+		t.Run("Get client key", func(t *testing.T) {
+			key, err := client.GetClientKey(org, project, key.ID)
+			if err != nil {
+				t.Error(err)
+			}
+
+			if key.ID != key.ID {
+				t.Error("Failed to fetch key")
+			}
+
+			if key.Name != testClientKeyName {
+				t.Error("Key does not have correct name")
+			}
 		})
 	})
 
