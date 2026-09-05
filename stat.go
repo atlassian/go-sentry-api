@@ -35,7 +35,7 @@ func (o *statRequest) ToQueryString() string {
 	return query.Encode()
 }
 
-// Stat is used for tetting a time in seconds and the metric in a float
+// Stat is used for getting a time in seconds and the metric in a float
 type Stat [2]float64
 
 // StatQuery is sample type for sending to /stats/ endpoints

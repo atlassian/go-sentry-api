@@ -23,7 +23,7 @@ const (
 )
 
 // Client is used to talk to a sentry endpoint.
-// Needs a auth token.
+// Needs an auth token.
 // If no endpoint this defaults to https://sentry.io/api/0/
 type Client struct {
 	AuthToken  string
@@ -31,7 +31,7 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-// NewClient takes a auth token a optional endpoint and optional timeout and
+// NewClient takes an auth token an optional endpoint and optional timeout and
 // will return back a client and error
 func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error) {
 	var (
@@ -43,7 +43,7 @@ func NewClient(authtoken string, endpoint *string, timeout *int) (*Client, error
 		clientEndpoint = fmt.Sprintf("%s%s", DefaultHost, DefaultEndpoint)
 	} else {
 		if *endpoint == "" {
-			return nil, fmt.Errorf("Endpoint can not be a empty string")
+			return nil, fmt.Errorf("Endpoint can not be an empty string")
 		}
 		clientEndpoint = *endpoint
 	}

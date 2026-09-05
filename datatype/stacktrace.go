@@ -44,14 +44,14 @@ type Frame struct {
 	Symbol             *string                 `json:"symbol,omitempty"`
 }
 
-//Exception implements a exception which olds stacktraces
+//Exception implements an exception which holds stacktraces
 type Exception struct {
 	Values          *[]SingleException `json:"values,omitempty"`
 	HasSystemFrames *bool              `json:"hasSystemFrames,omitempty"`
 	ExcOmitted      *bool              `json:"excOmitted,omitempty"`
 }
 
-// SingleException represents a single exception in a exception
+// SingleException represents a single exception in an exception
 type SingleException struct {
 	Type       *string            `json:"type,omitempty"`
 	Value      *string            `json:"value,omitempty"`

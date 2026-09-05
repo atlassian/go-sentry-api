@@ -12,7 +12,7 @@ const (
 	UsersEndpointName   = "users"
 )
 
-// Quota is your quote for a project limit and max rate
+// Quota is your quota for a project limit and max rate
 type Quota struct {
 	ProjectLimit int `json:"projectLimit"`
 	MaxRate      int `json:"maxRate"`
@@ -75,7 +75,7 @@ func (c *Client) UpdateOrganization(org Organization) error {
 	return c.do("PUT", fmt.Sprintf("%s/%s", OrgEndpointName, *org.Slug), &org, &org)
 }
 
-// DeleteOrganization will delete the Org. There is not way to revert this if you do.
+// DeleteOrganization will delete the Org. There is no way to revert this if you do.
 func (c *Client) DeleteOrganization(org Organization) error {
 	return c.do("DELETE", fmt.Sprintf("%s/%s", OrgEndpointName, *org.Slug), nil, nil)
 }

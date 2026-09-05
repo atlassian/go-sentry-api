@@ -83,21 +83,21 @@ type Event struct {
 	GroupID         *string                 `json:"groupID,omitempty"`
 }
 
-// GetProjectEvent will fetch a event on a project
+// GetProjectEvent will fetch an event on a project
 func (c *Client) GetProjectEvent(o Organization, p Project, eventID string) (Event, error) {
 	var event Event
 	err := c.do("GET", fmt.Sprintf("projects/%s/%s/events/%s", *o.Slug, *p.Slug, eventID), &event, nil)
 	return event, err
 }
 
-// GetLatestEvent will fetch the latest event for a issue
+// GetLatestEvent will fetch the latest event for an issue
 func (c *Client) GetLatestEvent(i Issue) (Event, error) {
 	var event Event
 	err := c.do("GET", fmt.Sprintf("issues/%s/events/latest", *i.ID), &event, nil)
 	return event, err
 }
 
-// GetOldestEvent will fetch the latest event for a issue
+// GetOldestEvent will fetch the oldest event for an issue
 func (c *Client) GetOldestEvent(i Issue) (Event, error) {
 	var event Event
 	err := c.do("GET", fmt.Sprintf("issues/%s/events/oldest", *i.ID), &event, nil)
