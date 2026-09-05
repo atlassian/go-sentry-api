@@ -86,14 +86,14 @@ func (c *Client) UpdateProject(o Organization, p Project) error {
 	return c.do("PUT", fmt.Sprintf("projects/%s/%s", *o.Slug, *p.Slug), &p, &p)
 }
 
-// GetProjects fetchs all projects in a sentry instance
+// GetProjects fetches all projects in a sentry instance
 func (c *Client) GetProjects() ([]Project, *Link, error) {
 	var proj []Project
 	link, err := c.doWithPagination("GET", "projects", &proj, nil)
 	return proj, link, err
 }
 
-// GetOrgProjects fetchs all projects belonging to a organization
+// GetOrgProjects fetches all projects belonging to an organization
 func (c *Client) GetOrgProjects(o Organization) ([]Project, *Link, error) {
 	var proj []Project
 	link, err := c.doWithPagination("GET", fmt.Sprintf("organizations/%s/projects", *o.Slug), &proj, nil)
